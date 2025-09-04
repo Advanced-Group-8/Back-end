@@ -1,5 +1,5 @@
-import PackageModel from "@/models/PackageModel.js";
-import { Package } from "@/types/types.js";
+import PackageModel from "@/src/models/PackageModel.js";
+import { Package } from "@/src/types/types.js";
 
 const PackageService = {
   create: async (packageData: Package) => {

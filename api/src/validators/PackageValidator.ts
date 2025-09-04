@@ -1,4 +1,4 @@
-import { Package } from "@/types/types.js";
+import { Package } from "@/src/types/types.js";
 
 const PackageValidator = {
   create: (packageData: Package) => {

@@ -1,6 +1,6 @@
 import express, { Request, Response } from "express";
 import dotenv from "dotenv";
-import PackageRouter from "./routes/PackageRouter.js";
+import PackageRouter from "./src/routes/PackageRouter.js";
 
 dotenv.config();
 
