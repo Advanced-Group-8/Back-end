@@ -1,6 +1,6 @@
 FROM node:24-alpine
 
-WORKDIR /backend
+WORKDIR /backend/api
 
 COPY package*.json ./
  
@@ -21,4 +21,4 @@ RUN adduser -S nextjs -u 1001
 RUN chown -R nextjs:nodejs /backend
 USER nextjs
 
-CMD ["npm", "start"]
+CMD ["npm", "run", "dev"]
