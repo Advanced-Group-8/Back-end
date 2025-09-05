@@ -39,7 +39,7 @@ INSERT INTO package (sender_id, receiver_id, sender_address_id, receiver_address
 (1, 6, 7, 8, 'CARRIER001', 'pending', 'TRK777888999', '2024-09-15 11:30:00');
 
 -- Mock Location Data (GPS tracking)
-INSERT INTO location (package_id, lat, long, created_at) VALUES
+INSERT INTO location (package_id, lat, lng, created_at) VALUES
 -- Package 1 (in transit Stockholm -> Malmö)
 (1, 59.334591, 18.063240, '2024-09-07 08:00:00'), -- Stockholm start
 (1, 58.756416, 16.628838, '2024-09-07 12:30:00'), -- Norrköping
