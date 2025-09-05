@@ -37,7 +37,7 @@ export type ContactInfo = {
   address?: string;
 };
 
-export type Location = {
+export type LocationSensor = {
   id?: number;
   packageId: number; // FK → Package.id
   lat?: number;
@@ -45,15 +45,26 @@ export type Location = {
   createdAt: string; // ISO timestamp
 };
 
-export type Temperature = {
+export type TemperatureSensor = {
   id?: number;
   packageId: number; // FK → Package.id
   temperature: number;
   createdAt: string; // ISO timestamp
 };
 
-export type Humidity = {
+export type HumiditySensor = {
   id?: number;
   packageId: number; // FK → Package.id
   humidity: number;
+  createdAt: string
+};
+
+export type SensorReading = {
+  id?: number;
+  packageId: number;
+  sensorType: 'temperature' | 'humidity' | 'location';
+  value: number;
+  lat?: number;
+  long?: number;
+  createdAt?: string;
 };
