@@ -5,9 +5,19 @@ CREATE TABLE IF NOT EXISTS profile (
     role VARCHAR(50),
     company_name VARCHAR(100),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- address MÅSTE komma före package (dependency)
+CREATE TABLE IF NOT EXISTS address (
+    id BIGSERIAL PRIMARY KEY,
+    street VARCHAR(255),
+    city VARCHAR(100),
+    postal_code VARCHAR(20),
+    country VARCHAR(100)
+);
+
+-- Nu kan package referera till både profile och address
 CREATE TABLE IF NOT EXISTS package (
     id BIGSERIAL PRIMARY KEY,
     sender_id BIGINT,
@@ -18,20 +28,12 @@ CREATE TABLE IF NOT EXISTS package (
     status VARCHAR(50),
     tracking_code VARCHAR(100),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     eta TIMESTAMP,
     FOREIGN KEY (sender_id) REFERENCES profile (id),
     FOREIGN KEY (receiver_id) REFERENCES profile (id),
     FOREIGN KEY (sender_address_id) REFERENCES address (id),
     FOREIGN KEY (receiver_address_id) REFERENCES address (id)
-);
-
-CREATE TABLE IF NOT EXISTS address (
-    id BIGSERIAL PRIMARY KEY,
-    street VARCHAR(255),
-    city VARCHAR(100),
-    postal_code VARCHAR(20),
-    country VARCHAR(100)
 );
 
 CREATE TABLE IF NOT EXISTS contactInfo (
@@ -46,7 +48,7 @@ CREATE TABLE IF NOT EXISTS location (
     id BIGSERIAL PRIMARY KEY,
     package_id BIGINT,
     lat DECIMAL(9, 6),
-    long DECIMAL(9, 6),
+    lng DECIMAL(9, 6), -- Ändrat från 'long' (reserved keyword)
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (package_id) REFERENCES package (id)
 );
@@ -54,7 +56,7 @@ CREATE TABLE IF NOT EXISTS location (
 CREATE TABLE IF NOT EXISTS temperature (
     id BIGSERIAL PRIMARY KEY,
     package_id BIGINT,
-    temperature DOUBLE,
+    temperature DOUBLE PRECISION, -- PostgreSQL korrekt syntax
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (package_id) REFERENCES package (id)
 );
@@ -62,6 +64,7 @@ CREATE TABLE IF NOT EXISTS temperature (
 CREATE TABLE IF NOT EXISTS humidity (
     id BIGSERIAL PRIMARY KEY,
     package_id BIGINT,
-    humidity DOUBLE,
+    humidity DOUBLE PRECISION, -- PostgreSQL korrekt syntax
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (package_id) REFERENCES package (id)
 );
