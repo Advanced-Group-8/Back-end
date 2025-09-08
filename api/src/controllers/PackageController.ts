@@ -1,5 +1,5 @@
-import PackageService from "@/src/services/PackageService.js";
-import { Package } from "@/src/types/types.js";
+import PackageService from "../services/PackageService";
+import { Package } from "../types/types";
 import { Request, Response } from "express";
 
 type PackageRequest = Request<{}, {}, Package>;

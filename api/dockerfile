@@ -2,13 +2,16 @@ FROM node:24-alpine
 
 WORKDIR /backend/api
 
+# Copy package.json and package-lock.json
 COPY package*.json ./
- 
 RUN npm ci
 
-COPY . .
+# Copy tsconfig.json
+COPY tsconfig.json ./
 
-RUN npm run build 
+# COPY . .
+
+# RUN npm run build 
 
 # Ta bort denna rad - den förstör path resolution
 # RUN npm prune --production

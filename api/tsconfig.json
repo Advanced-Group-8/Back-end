@@ -1,17 +1,20 @@
 {
   "compilerOptions": {
-    "target": "ES2022",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
-    "rootDir": ".",
-    "outDir": "dist",
-    "strict": true,
+    "target": "es2016",
+    "module": "commonjs",
+    "outDir": "./dist",
+    "rootDir": "./src",
     "baseUrl": ".",
-    "paths": { "@/*": ["*"] },
+    "paths": {
+      "@/*": ["src/*"],
+      "@/src/*": ["src/*"]
+    },
+    "strict": true,
     "esModuleInterop": true,
+    "moduleResolution": "node",
     "skipLibCheck": true,
-    "sourceMap": true,
-    "resolveJsonModule": true
+    "sourceMap": true
   },
-  "include": ["."]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
 }

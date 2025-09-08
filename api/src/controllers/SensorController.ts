@@ -1,5 +1,5 @@
-import SensorService from "@/src/services/SensorService.js";
-import { TemperatureSensor, HumiditySensor, LocationSensor } from "@/src/types/types.js";
+import SensorService from "../services/SensorService";
+import { TemperatureSensor, HumiditySensor, LocationSensor } from "../types/types";
 import { Request, Response } from "express";
 
 type SensorRequest = Request<{}, {}, TemperatureSensor | HumiditySensor | LocationSensor>;
@@ -89,7 +89,7 @@ const SensorController = {
     } catch (error) {
       throw error;
     }
-  }
+  },
 };
 
 export default SensorController;

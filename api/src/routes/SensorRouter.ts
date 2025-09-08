@@ -1,6 +1,6 @@
 import express from "express";
-import SensorController from "@/src/controllers/SensorController.js";
-import SensorValidator from "@/src/validators/SensorValidator.js";
+import SensorController from "../controllers/SensorController";
+import SensorValidator from "../validators/SensorValidator";
 
 const router = express.Router();
 
@@ -17,6 +17,3 @@ router.get("/all/:packageId", SensorController.getAllSensorsByPackage);
 router.get("/latest/:packageId", SensorController.getLatestReadings);
 
 export default router;
-
-
-

@@ -2,12 +2,12 @@
     "name": "logi",
     "version": "1.0.0",
     "description": "Detta projekt är en **backend-server** som knyter samman hela logistikflödet – från avsändare, via transportör/logistikbärare, till mottagare.  \r Systemet erbjuder **molnbaserad hantering** av paket, fordonsdata och analysmöjligheter för effektiv spårning och övervakning.",
-    "main": "dist/server.js",
+    "main": "./dist/server.js",
     "type": "module",
     "scripts": {
-        "dev": "tsx watch server.ts",
-        "build": "tsc && tsc-alias",
-        "start": "node dist/server.js"
+        "start": "node dist/server.js",
+        "dev": "tsx watch src/server.ts",
+        "build": "tsc"
     },
     "repository": {
         "type": "git",
@@ -50,8 +50,12 @@
         "eslint-config-prettier": "^10.1.8",
         "globals": "^16.3.0",
         "jiti": "^2.5.1",
+        "nodemon": "^3.1.10",
         "prettier": "^3.6.2",
+        "ts-node": "^10.9.2",
+        "ts-node-dev": "^2.0.0",
         "tsc-alias": "^1.8.16",
+        "tsconfig-paths": "^4.2.0",
         "tsx": "^4.20.5",
         "typescript": "^5.9.2",
         "typescript-eslint": "^8.41.0"
