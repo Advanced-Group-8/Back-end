@@ -31,11 +31,13 @@ export type Package = {
   senderAddressId: number; // FK → Address.id
   receiverAddressId: number; // FK → Address.id
   currentCarrierId: number;
+  deviceId: string;
   status?: PackageStatus;
   trackingCode?: string;
   createdAt: string; // ISO timestamp
   updatedAt: string; // ISO timestamp
   eta?: string; // ISO timestamp
+  readings?: PackageTracking[];
 };
 export type CreatePackage = Omit<Package, "id" | "createdAt" | "updatedAt">;
 
@@ -44,45 +46,25 @@ export type CreatePackagePayload = {
   receiverAddress: CreateAddress;
   packageInfo: Pick<
     CreatePackage,
-    "receiverId" | "senderId" | "currentCarrierId" | "trackingCode" | "eta"
+    "receiverId" | "senderId" | "currentCarrierId" | "deviceId" | "trackingCode" | "eta"
   >;
 };
 
 export type ContactInfo = {
   id?: number;
-  profileId: number; // FK → Profile.id
+  profileId: number;
   phone?: string;
   address?: string;
 };
 
-export type LocationSensor = {
-  id?: number;
-  packageId: number; // FK → Package.id
-  lat?: number;
-  long?: number;
-  createdAt: string; // ISO timestamp
-};
-
-export type TemperatureSensor = {
-  id?: number;
-  packageId: number; // FK → Package.id
+export type PackageTracking = {
+  id: number;
+  deviceId: string;
+  lat: number;
+  lng: number;
   temperature: number;
-  createdAt: string; // ISO timestamp
-};
-
-export type HumiditySensor = {
-  id?: number;
-  packageId: number; // FK → Package.id
   humidity: number;
   createdAt: string;
 };
 
-export type SensorReading = {
-  id?: number;
-  packageId: number;
-  sensorType: "temperature" | "humidity" | "location";
-  value: number;
-  lat?: number;
-  long?: number;
-  createdAt?: string;
-};
+export type CreatePackageTracking = Omit<PackageTracking, "id" | "createdAt">;

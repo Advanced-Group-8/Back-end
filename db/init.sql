@@ -23,6 +23,7 @@ CREATE TABLE IF NOT EXISTS package (
     sender_address_id BIGINT,
     receiver_address_id BIGINT,
     current_carrier_id BIGINT,
+    device_id VARCHAR(100) NOT NULL,
     status VARCHAR(50),
     tracking_code VARCHAR(100),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -41,28 +42,12 @@ CREATE TABLE IF NOT EXISTS contactInfo (
     address VARCHAR(255),
     FOREIGN KEY (profile_id) REFERENCES profile (id)
 );
-CREATE TABLE IF NOT EXISTS location (
+CREATE TABLE IF NOT EXISTS package_tracking (
     id BIGSERIAL PRIMARY KEY,
-    package_id BIGINT,
+    device_id VARCHAR(100) NOT NULL,
     lat DECIMAL(9, 6),
     lng DECIMAL(9, 6),
-    -- Ändrat från 'long' (reserved keyword)
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (package_id) REFERENCES package (id)
-);
-CREATE TABLE IF NOT EXISTS temperature (
-    id BIGSERIAL PRIMARY KEY,
-    package_id BIGINT,
     temperature DOUBLE PRECISION,
-    -- PostgreSQL korrekt syntax
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (package_id) REFERENCES package (id)
-);
-CREATE TABLE IF NOT EXISTS humidity (
-    id BIGSERIAL PRIMARY KEY,
-    package_id BIGINT,
     humidity DOUBLE PRECISION,
-    -- PostgreSQL korrekt syntax
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (package_id) REFERENCES package (id)
 );

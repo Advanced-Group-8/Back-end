@@ -7,7 +7,7 @@ const PackageService = {
   create: async ({
     senderAddress,
     receiverAddress,
-    packageInfo: { senderId, receiverId, currentCarrierId, trackingCode, eta },
+    packageInfo: { senderId, receiverId, currentCarrierId, deviceId, trackingCode, eta },
   }: CreatePackagePayload): Promise<ReturnType<typeof PackageModel.create>> => {
     try {
       await executeQuery("BEGIN;");
@@ -22,8 +22,9 @@ const PackageService = {
         receiverAddressId,
         currentCarrierId,
         trackingCode,
-        eta,
+        deviceId,
         status: "pending",
+        eta,
       });
 
       await executeQuery("COMMIT;");

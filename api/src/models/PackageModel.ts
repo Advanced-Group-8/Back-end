@@ -12,6 +12,7 @@ const PackageModel = {
     senderAddressId,
     receiverAddressId,
     currentCarrierId,
+    deviceId,
     status,
     trackingCode,
     eta,
@@ -19,8 +20,8 @@ const PackageModel = {
     return (
       await executeQuery<Package>(
         `
-            INSERT INTO package (sender_id, receiver_id, sender_address_id, receiver_address_id, current_carrier_id, status, tracking_code, eta)
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+            INSERT INTO package (sender_id, receiver_id, sender_address_id, receiver_address_id, current_carrier_id, device_id, status, tracking_code, eta)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
             RETURNING *;
           `,
         [
@@ -29,6 +30,7 @@ const PackageModel = {
           senderAddressId,
           receiverAddressId,
           currentCarrierId,
+          deviceId,
           status,
           trackingCode,
           eta,
