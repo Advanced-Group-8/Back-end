@@ -39,7 +39,15 @@ export type Package = {
   eta?: string; // ISO timestamp
   readings?: PackageTracking[];
 };
+
 export type CreatePackage = Omit<Package, "id" | "createdAt" | "updatedAt">;
+
+export type GetPackageById = NonNullable<Package["id"]>;
+
+export type GetPackages = Pick<Package, "senderId" | "receiverId"> &
+  Partial<Pick<Package, "currentCarrierId" | "status">> & { senderAddress: Partial<Address> } & {
+    receiverAddress: Partial<Address>;
+  };
 
 export type CreatePackagePayload = {
   senderAddress: CreateAddress;

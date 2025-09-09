@@ -1,10 +1,87 @@
-import { CreatePackage, Package } from "@/src/types/types.js";
+import { CreatePackage, GetPackageById, GetPackages, Package } from "@/src/types/types.js";
 import { executeQuery } from "@/utils";
 
 const PackageModel = {
-  get: async () => {},
+  get: async ({
+    senderId,
+    receiverId,
+    currentCarrierId,
+    status,
+    senderAddress,
+    receiverAddress,
+  }: GetPackages) => {
+    const filters: string[] = [];
+    const values: (string | number)[] = [];
 
-  getById: async (id: NonNullable<Package["id"]>) => {
+    values.push(senderId);
+    filters.push(`p.sender_id = $${values.length}`);
+
+    values.push(receiverId);
+    filters.push(`p.receiver_id = $${values.length}`);
+
+    if (currentCarrierId !== undefined) {
+      values.push(currentCarrierId);
+      filters.push(`p.current_carrier_id = $${values.length}`);
+    }
+
+    if (status !== undefined) {
+      values.push(status);
+      filters.push(`p.status = $${values.length}`);
+    }
+
+    if (senderAddress) {
+      Object.entries(senderAddress).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+          values.push(`%${value}%`);
+          filters.push(`sa.${key} ILIKE $${values.length}`);
+        }
+      });
+    }
+
+    if (receiverAddress) {
+      Object.entries(receiverAddress).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+          values.push(`%${value}%`);
+          filters.push(`ra.${key} ILIKE $${values.length}`);
+        }
+      });
+    }
+
+    let query = `
+      SELECT 
+        p.*,
+        COALESCE(
+          json_agg(
+            json_build_object(
+              'id', pt.id,
+              'deviceId', pt.device_id,
+              'lat', pt.lat,
+              'lng', pt.lng,
+              'temperature', pt.temperature,
+              'humidity', pt.humidity,
+              'createdAt', pt.created_at
+            )
+          ) FILTER (WHERE pt.id IS NOT NULL), '[]'
+        ) AS readings
+      FROM package p
+      LEFT JOIN package_tracking pt
+        ON p.device_id = pt.device_id
+      LEFT JOIN address sa
+        ON p.sender_address_id = sa.id
+      LEFT JOIN address ra
+        ON p.receiver_address_id = ra.id
+    `;
+
+    if (filters.length > 0) {
+      query += ` WHERE ${filters.join(" AND ")}`;
+    }
+
+    query += ` GROUP BY p.id`;
+    query += ` ORDER BY p.eta ASC NULLS LAST`;
+
+    return await executeQuery<Package>(query, values);
+  },
+  getById: async (id: GetPackageById) => {
     const result = await executeQuery<Package>(
       `
       SELECT 
