@@ -1,4 +1,4 @@
-import { CreatePackge, Package } from "@/src/types/types.js";
+import { CreatePackage, Package } from "@/src/types/types.js";
 import { executeQuery } from "@/utils";
 
 const PackageModel = {
@@ -15,7 +15,7 @@ const PackageModel = {
     status,
     trackingCode,
     eta,
-  }: CreatePackge) => {
+  }: CreatePackage) => {
     return (
       await executeQuery<Package>(
         `
