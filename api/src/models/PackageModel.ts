@@ -2,10 +2,37 @@ import { CreatePackage, Package } from "@/src/types/types.js";
 import { executeQuery } from "@/utils";
 
 const PackageModel = {
-  getOneByPackageId: async (packageId: number) => {
-    //run sql
+  get: async () => {},
+
+  getById: async (id: NonNullable<Package["id"]>) => {
+    const result = await executeQuery<Package>(
+      `
+      SELECT 
+        p.*,
+        COALESCE(
+          json_agg(
+            json_build_object(
+              'id', pt.id,
+              'deviceId', pt.device_id,
+              'lat', pt.lat,
+              'lng', pt.lng,
+              'temperature', pt.temperature,
+              'humidity', pt.humidity,
+              'createdAt', pt.created_at
+            )
+          ) FILTER (WHERE pt.id IS NOT NULL), '[]'
+        ) AS readings
+      FROM package p
+      LEFT JOIN package_tracking pt
+        ON p.device_id = pt.device_id
+      WHERE p.id = $1
+      GROUP BY p.id;
+      `,
+      [id]
+    );
+
+    return result[0];
   },
-  getMany: async () => {},
   create: async ({
     senderId,
     receiverId,
