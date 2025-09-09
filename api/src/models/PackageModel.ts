@@ -17,7 +17,7 @@ const PackageModel = {
     eta,
   }: CreatePackge) => {
     return (
-      await executeQuery(
+      await executeQuery<Package>(
         `
             INSERT INTO package (sender_id, receiver_id, sender_address_id, receiver_address_id, current_carrier_id, status, tracking_code, eta)
             VALUES ($1, $2, $3, $4, $5, $6, $7, $8)

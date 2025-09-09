@@ -37,8 +37,16 @@ export type Package = {
   updatedAt: string; // ISO timestamp
   eta?: string; // ISO timestamp
 };
+export type CreatePackge = Omit<Package, "id" | "createdAt" | "updatedAt">;
 
-export type CreatePackge = Omit<Package, "id">;
+export type CreateOrder = {
+  senderAddress: CreateAddress;
+  receiverAddress: CreateAddress;
+  packageInfo: Pick<
+    CreatePackge,
+    "receiverId" | "senderId" | "currentCarrierId" | "trackingCode" | "eta"
+  >;
+};
 
 export type ContactInfo = {
   id?: number;
