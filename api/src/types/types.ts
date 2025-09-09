@@ -9,12 +9,20 @@ export type Profile = {
 };
 
 export type Address = {
-  id?: number;
-  street?: string;
-  city?: string;
-  postalCode?: string;
-  country?: string;
+  id: number;
+  street: string;
+  city: string;
+  postalCode: string;
+  country: string;
 };
+
+export type CreateAddress = Omit<Address, "id">;
+
+export type PackageStatus =
+  | "pending" // Package created but not yet shipped
+  | "in_transit" // Package is on its way
+  | "delivered" // Package delivered to recipient
+  | "cancelled";
 
 export type Package = {
   id?: number;
@@ -23,7 +31,7 @@ export type Package = {
   senderAddressId: number; // FK → Address.id
   receiverAddressId: number; // FK → Address.id
   currentCarrierId: string;
-  status?: string;
+  status?: PackageStatus;
   trackingCode?: string;
   createdAt: string; // ISO timestamp
   updatedAt: string; // ISO timestamp
@@ -56,13 +64,13 @@ export type HumiditySensor = {
   id?: number;
   packageId: number; // FK → Package.id
   humidity: number;
-  createdAt: string
+  createdAt: string;
 };
 
 export type SensorReading = {
   id?: number;
   packageId: number;
-  sensorType: 'temperature' | 'humidity' | 'location';
+  sensorType: "temperature" | "humidity" | "location";
   value: number;
   lat?: number;
   long?: number;
