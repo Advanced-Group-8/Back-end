@@ -8,7 +8,7 @@ services:
     image: postgres:14-alpine
     # Load environment variables from .env file in the api directory
     env_file:
-      - ./api/.env
+      - ./.env
     # Configure PostgreSQL credentials and database name
     environment:
       POSTGRES_USER: postgres
@@ -39,7 +39,7 @@ services:
       - "3000:3000"
     # Load environment variables from .env file in the api directory
     env_file:
-      - ./api/.env
+      - ./.env
     # Set production environment for optimized behavior
     environment:
       - DATABASE_URL=${DATABASE_URL}

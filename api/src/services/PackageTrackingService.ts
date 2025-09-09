@@ -1,7 +1,7 @@
 import PackageTrackingModel from "@/models/PackageTrackingModel";
 import { CreatePackageTracking } from "@/src/types/types.js";
 
-const PackageService = {
+const PackageTrackingService = {
   create: async (
     payload: CreatePackageTracking
   ): Promise<ReturnType<typeof PackageTrackingModel.create>> => {
@@ -9,4 +9,4 @@ const PackageService = {
   },
 };
 
-export default PackageService;
+export default PackageTrackingService;
