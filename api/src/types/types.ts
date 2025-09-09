@@ -30,13 +30,15 @@ export type Package = {
   receiverId: number; // FK → Profile.id
   senderAddressId: number; // FK → Address.id
   receiverAddressId: number; // FK → Address.id
-  currentCarrierId: string;
+  currentCarrierId: number;
   status?: PackageStatus;
   trackingCode?: string;
   createdAt: string; // ISO timestamp
   updatedAt: string; // ISO timestamp
   eta?: string; // ISO timestamp
 };
+
+export type CreatePackge = Omit<Package, "id">;
 
 export type ContactInfo = {
   id?: number;
