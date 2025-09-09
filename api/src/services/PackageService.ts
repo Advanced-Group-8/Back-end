@@ -1,9 +1,15 @@
 import AddressModel from "@/models/AddressModel";
 import PackageModel from "@/src/models/PackageModel.js";
-import { CreatePackagePayload } from "@/src/types/types.js";
+import { CreatePackagePayload, GetPackageById, GetPackages } from "@/src/types/types.js";
 import { executeQuery } from "@/utils";
 
 const PackageService = {
+  get: async (payload: GetPackages) => {
+    return await PackageModel.get(payload);
+  },
+  getById: async (payload: GetPackageById) => {
+    return await PackageModel.getById(payload);
+  },
   create: async ({
     senderAddress,
     receiverAddress,

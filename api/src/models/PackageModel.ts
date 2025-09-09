@@ -81,7 +81,7 @@ const PackageModel = {
 
     return await executeQuery<Package>(query, values);
   },
-  getById: async (id: GetPackageById) => {
+  getById: async ({ id }: GetPackageById) => {
     const result = await executeQuery<Package>(
       `
       SELECT 
