@@ -1,12 +1,17 @@
-import z, { ZodError, ZodIssueCode } from "zod";
+import { ZodError } from "zod";
 import { NextFunction, Response } from "express";
 import { BadRequestError, NotFoundError } from "@/errors/Error";
-import { CreatePackageRequest, GetPackagesRequest } from "@/types/requestTypes";
+import {
+  CreatePackageRequest,
+  GetPackageByIdRequest,
+  GetPackagesRequest,
+} from "@/types/requestTypes";
 import ProfileValidator from "./ProfileValidator";
-import { GetPackageDeviceId } from "@/types/types";
+import { GetPackageById, GetPackageDeviceId } from "@/types/types";
 import PackageService from "@/services/PackageService";
 import {
   createPackageBodySchema,
+  getPackageByIdParamsSchema,
   getPackagesQuerySchema,
 } from "@/schemas/validation/packageValidationSchemas";
 
@@ -56,6 +61,34 @@ const PackageValidator = {
         return next(err);
       }
     },
+  },
+  getById: {
+    params: async (req: GetPackageByIdRequest, _res: Response, next: NextFunction) => {
+      const payload = req.params;
+
+      try {
+        getPackageByIdParamsSchema.parse(payload);
+
+        await PackageValidator.exists({ id: payload.id });
+
+        next();
+      } catch (err: unknown) {
+        if (err instanceof ZodError) {
+          return next(new BadRequestError(JSON.stringify(err.errors)));
+        }
+
+        return next(err);
+      }
+    },
+  },
+  exists: async (payload: GetPackageById) => {
+    const packageId = (await PackageService.getById(payload)).id;
+
+    if (!packageId) {
+      throw new NotFoundError(`No package with id '${payload.id}' found`);
+    }
+
+    return packageId;
   },
   hasDeviceId: async ({ deviceId }: GetPackageDeviceId) => {
     const packageId = (await PackageService.getByDeviceId({ deviceId })).id;

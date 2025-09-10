@@ -103,3 +103,10 @@ export const getPackagesQuerySchema = z.object({
     })
     .optional(),
 });
+
+export const getPackageByIdParamsSchema = z.object({
+  id: z
+    .string({ message: "'id' is required" })
+    .nonempty({ message: "'id' is required" })
+    .transform(Number),
+});
