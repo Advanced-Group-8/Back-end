@@ -50,12 +50,12 @@ export type GetPackages = Pick<Package, "senderId" | "receiverId"> &
   };
 
 export type CreatePackagePayload = {
+  senderId: Package["senderId"];
+  receiverId: Package["receiverId"];
+  currentCarrierId: Package["currentCarrierId"];
+  deviceId: Package["deviceId"];
   senderAddress: CreateAddress;
   receiverAddress: CreateAddress;
-  packageInfo: Pick<
-    CreatePackage,
-    "receiverId" | "senderId" | "currentCarrierId" | "deviceId" | "trackingCode" | "eta"
-  >;
 };
 
 export type ContactInfo = {

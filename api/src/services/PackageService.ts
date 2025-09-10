@@ -1,6 +1,6 @@
 import PackageModel from "@/src/models/PackageModel.js";
 import { CreatePackagePayload, GetPackageById, GetPackages } from "@/src/types/types.js";
-import { executeQuery } from "@/utils";
+import { executeQuery, getRandomETA, getRandomTrackingCode } from "@/utils";
 import AddressService from "./AddressService";
 
 const PackageService = {
@@ -11,9 +11,12 @@ const PackageService = {
     return await PackageModel.getById(payload);
   },
   create: async ({
+    senderId,
+    receiverId,
+    currentCarrierId,
+    deviceId,
     senderAddress,
     receiverAddress,
-    packageInfo: { senderId, receiverId, currentCarrierId, deviceId, trackingCode, eta },
   }: CreatePackagePayload): Promise<ReturnType<typeof PackageModel.create>> => {
     try {
       await executeQuery("BEGIN;");
@@ -29,10 +32,10 @@ const PackageService = {
         senderAddressId,
         receiverAddressId,
         currentCarrierId,
-        trackingCode,
+        trackingCode: getRandomTrackingCode(),
         deviceId,
         status: "pending",
-        eta,
+        eta: getRandomETA(),
       });
 
       await executeQuery("COMMIT;");

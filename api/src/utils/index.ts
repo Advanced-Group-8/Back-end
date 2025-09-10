@@ -1,5 +1,6 @@
 import { PoolClient, QueryResult, QueryResultRow } from "pg";
 import { pool } from "../db/config";
+import { addDays } from "date-fns";
 
 export const sanitizeValues = <T>(values: (string | T)[]): (string | T)[] => {
   return values.map((value) => (typeof value === "string" ? value.trim() : value));
@@ -26,4 +27,16 @@ export const executeQuery = async <T extends QueryResultRow = QueryResultRow>(
   } finally {
     client?.release();
   }
+};
+
+export const getRandomETA = () =>
+  addDays(new Date(), Math.floor(Math.random() * 8) + 3).toISOString();
+
+export const getRandomTrackingCode = (): string => {
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+  const generateBlock = () =>
+    Array.from({ length: 4 }, () => chars[Math.floor(Math.random() * chars.length)]).join("");
+
+  return `${generateBlock()}-${generateBlock()}-${generateBlock()}-${generateBlock()}`;
 };
