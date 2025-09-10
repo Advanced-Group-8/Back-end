@@ -34,7 +34,7 @@ app.get("/test", (req: Request, res: Response) => {
 
 async function testConnection() {
   try {
-    const result = await executeQuery("SELECT * FROM profile");
+    const result = await executeQuery("SELECT * FROM package");
     console.log("Database time:", result);
   } catch (error: unknown) {
     if (error instanceof Error) {
