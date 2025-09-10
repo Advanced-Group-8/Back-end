@@ -1,6 +1,7 @@
 import express, { Request, Response } from "express";
 import dotenv from "dotenv";
 import PackageRouter from "./routes/PackageRouter";
+import SensorRouter from "./routes/SensorRouter.js"; 
 import "./db/config";
 import { executeQuery } from "./utils/index";
 import ErrorMiddleware from "./middlewares/ErrorMiddleware";
@@ -17,6 +18,7 @@ app.get("/hello", (req: Request, res: Response) => {
 });
 
 app.use("/package", PackageRouter);
+app.use("/sensor", SensorRouter);
 
 app.get("/test", (req: Request, res: Response) => {
   res.json({
