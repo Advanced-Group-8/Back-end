@@ -8,6 +8,8 @@ export type Profile = {
   updatedAt: string; // ISO timestamp
 };
 
+export type GetProfileById = { id: NonNullable<Profile["id"]> };
+
 export type Address = {
   id: number;
   street: string;
