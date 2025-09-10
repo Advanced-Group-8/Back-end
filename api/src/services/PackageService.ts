@@ -1,4 +1,3 @@
-import AddressModel from "@/models/AddressModel";
 import PackageModel from "@/src/models/PackageModel.js";
 import { CreatePackagePayload, GetPackageById, GetPackages } from "@/src/types/types.js";
 import { executeQuery } from "@/utils";
