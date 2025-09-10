@@ -1,6 +1,6 @@
 import { NotFoundError } from "@/errors/Error";
 import ProfileService from "@/services/ProfileService";
-import { GetProfileById, Profile } from "@/types/types";
+import { Profile } from "@/types/types";
 
 const ProfileValidator = {
   exists: async (
