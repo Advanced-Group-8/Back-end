@@ -49,5 +49,5 @@ CREATE TABLE IF NOT EXISTS package_tracking (
     lng DECIMAL(9, 6),
     temperature DOUBLE PRECISION,
     humidity DOUBLE PRECISION,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

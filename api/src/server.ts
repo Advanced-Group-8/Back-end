@@ -39,3 +39,26 @@ app.get("/test", (req: Request, res: Response) => {
 });
 
 // ... rest of code ...
+
+
+async function testConnection() {
+  try {
+    const result = await executeQuery("SELECT * FROM package");
+    console.log("Database time:", result);
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Connection test failed:", error.message);
+    } else {
+      console.error("Unknown error while testing connection:", error);
+    }
+  }
+}
+
+testConnection();
+
+app.use(ErrorMiddleware.notFoundHandler, ErrorMiddleware.errorHandler);
+
+app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`Test endpoint: http://localhost:${PORT}/test`);
+});
