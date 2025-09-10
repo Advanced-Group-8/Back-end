@@ -2,6 +2,7 @@ import AddressModel from "@/models/AddressModel";
 import PackageModel from "@/src/models/PackageModel.js";
 import { CreatePackagePayload, GetPackageById, GetPackages } from "@/src/types/types.js";
 import { executeQuery } from "@/utils";
+import AddressService from "./AddressService";
 
 const PackageService = {
   get: async (payload: GetPackages) => {
@@ -18,8 +19,10 @@ const PackageService = {
     try {
       await executeQuery("BEGIN;");
 
-      const { id: senderAddressId } = await AddressModel.create(senderAddress);
-      const { id: receiverAddressId } = await AddressModel.create(receiverAddress);
+      const [{ id: senderAddressId }, { id: receiverAddressId }] = await Promise.all([
+        AddressService.create(senderAddress),
+        AddressService.create(receiverAddress),
+      ]);
 
       const createdPackage = await PackageModel.create({
         senderId,
