@@ -1,8 +1,10 @@
 import z, { ZodError, ZodIssueCode } from "zod";
 import { NextFunction, Response } from "express";
-import { BadRequestError } from "@/errors/Error";
+import { BadRequestError, NotFoundError } from "@/errors/Error";
 import { CreatePackageRequest } from "@/types/requestTypes";
 import ProfileValidator from "./ProfileValidator";
+import { GetPackageDeviceId } from "@/types/types";
+import PackageService from "@/services/PackageService";
 
 const createPackageSchema = z
   .object({
@@ -87,6 +89,15 @@ const PackageValidator = {
         return next(err);
       }
     },
+  },
+  hasDeviceId: async ({ deviceId }: GetPackageDeviceId) => {
+    const packageId = (await PackageService.getByDeviceId({ deviceId })).id;
+
+    if (!packageId) {
+      throw new NotFoundError(`No package with deviceId '${deviceId}' found`);
+    }
+
+    return packageId;
   },
 };
 

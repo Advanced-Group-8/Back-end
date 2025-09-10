@@ -1,5 +1,10 @@
 import PackageModel from "@/src/models/PackageModel.js";
-import { CreatePackagePayload, GetPackageById, GetPackages } from "@/src/types/types.js";
+import {
+  CreatePackagePayload,
+  GetPackageById,
+  GetPackageDeviceId,
+  GetPackages,
+} from "@/src/types/types.js";
 import { executeQuery, getRandomETA, getRandomTrackingCode } from "@/utils";
 import AddressService from "./AddressService";
 
@@ -9,6 +14,9 @@ const PackageService = {
   },
   getById: async (payload: GetPackageById) => {
     return await PackageModel.getById(payload);
+  },
+  getByDeviceId: async ({ deviceId }: GetPackageDeviceId) => {
+    return PackageModel.getByDeviceId({ deviceId });
   },
   create: async ({
     senderId,

@@ -46,6 +46,8 @@ export type CreatePackage = Omit<Package, "id" | "createdAt" | "updatedAt">;
 
 export type GetPackageById = { id: NonNullable<Package["id"]> };
 
+export type GetPackageDeviceId = { deviceId: NonNullable<Package["deviceId"]> };
+
 export type GetPackages = Pick<Package, "senderId" | "receiverId"> &
   Partial<Pick<Package, "currentCarrierId" | "status">> & { senderAddress: Partial<Address> } & {
     receiverAddress: Partial<Address>;
