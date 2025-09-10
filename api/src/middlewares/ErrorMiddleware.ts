@@ -1,8 +1,8 @@
-import { AppError } from "@/errors/Error";
-import { Request, Response, NextFunction, ErrorRequestHandler } from "express";
+import { AppError, NotFoundError } from "@/errors/Error";
+import { Request, Response, NextFunction } from "express";
 
-const ErrorHandlerMiddleware = {
-  errorHandler: (async (err: unknown, req: Request, res: Response, next: NextFunction) => {
+const ErrorMiddleware = {
+  errorHandler: (err: unknown, _req: Request, res: Response, _next: NextFunction) => {
     if (err instanceof AppError) {
       return res.status(err.statusCode).json({
         message: err.message,
@@ -16,7 +16,10 @@ const ErrorHandlerMiddleware = {
       message: "Internal server error",
       success: false,
     });
-  }) as ErrorRequestHandler,
+  },
+  notFoundHandler: (req: Request, _res: Response, next: NextFunction) => {
+    next(new NotFoundError(`Route ${req.originalUrl} not found`));
+  },
 };
 
-export default ErrorHandlerMiddleware;
+export default ErrorMiddleware;

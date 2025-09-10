@@ -4,6 +4,7 @@ import PackageRouter from "./routes/PackageRouter";
 import SensorRouter from "./routes/SensorRouter";
 import "./db/config";
 import { executeQuery } from "./utils/index";
+import ErrorMiddleware from "./middlewares/ErrorMiddleware";
 
 dotenv.config();
 
@@ -47,6 +48,8 @@ async function testConnection() {
 }
 
 testConnection();
+
+app.use(ErrorMiddleware.notFoundHandler, ErrorMiddleware.errorHandler);
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
