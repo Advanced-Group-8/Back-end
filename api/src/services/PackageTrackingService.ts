@@ -24,6 +24,10 @@ const PackageTrackingService = {
         } catch (error) {
             throw error;
         }
+    },
+
+    getAllGroupedByDeviceId: async (): Promise<{ deviceId: string; data: PackageTracking[]; }[]> => {
+        return await PackageTrackingModel.getAllGroupedByDeviceId();
     }
 };
 

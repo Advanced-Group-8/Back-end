@@ -33,7 +33,8 @@ app.get("/test", (req: Request, res: Response) => {
       getPackageById: "GET /package/:id",
       createTracking: "POST /package-tracking",
       getTrackingByDevice: "GET /package-tracking/:deviceId",
-      getLatestTracking: "GET /package-tracking/:deviceId/latest"
+      getLatestTracking: "GET /package-tracking/:deviceId/latest",
+      getAllGroupedByDeviceId: "GET /package-tracking/"
     },
   });
 });

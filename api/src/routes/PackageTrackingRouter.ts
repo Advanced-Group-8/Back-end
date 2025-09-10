@@ -13,4 +13,6 @@ router.get("/:deviceId", PackageTrackingController.getByDeviceId);
 // GET: Senaste tracking för en device
 router.get("/:deviceId/latest", PackageTrackingController.getLatest);
 
+router.get("/", PackageTrackingController.getAllGroupedByDeviceId);
+
 export default router;

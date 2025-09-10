@@ -39,6 +39,15 @@ const PackageTrackingController = {
         } catch (error) {
             next(error);
         }
+    },
+
+    getAllGroupedByDeviceId: async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const deviceIds = await PackageTrackingService.getAllGroupedByDeviceId();
+            res.status(200).json(deviceIds);
+        } catch (error) {
+            next(error);
+        }
     }
 };
 

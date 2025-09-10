@@ -66,6 +66,31 @@ const PackageTrackingModel = {
         } catch (error) {
             throw error;
         }
+    },
+
+    getAllGroupedByDeviceId: async (): Promise<{ deviceId: string, data: PackageTracking[] }[]> => {
+        const query = `
+            SELECT 
+                id, 
+                device_id as "deviceId", 
+                lat, 
+                lng, 
+                temperature, 
+                humidity, 
+                created_at as "createdAt"
+            FROM package_tracking
+            ORDER BY device_id, created_at DESC
+        `;
+        const result = await executeQuery<PackageTracking>(query);
+
+        // Gruppera på deviceId
+        const grouped: Record<string, PackageTracking[]> = {};
+        for (const row of result) {
+            if (!grouped[row.deviceId]) grouped[row.deviceId] = [];
+            grouped[row.deviceId].push(row);
+        }
+        // Returnera som array av objekt
+        return Object.entries(grouped).map(([deviceId, data]) => ({ deviceId, data }));
     }
 };
 
