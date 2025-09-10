@@ -1,9 +1,9 @@
 import express, { Request, Response } from "express";
 import dotenv from "dotenv";
 import PackageRouter from "./routes/PackageRouter";
-import SensorRouter from "./routes/SensorRouter";
 import "./db/config";
 import { executeQuery } from "./utils/index";
+import ErrorMiddleware from "./middlewares/ErrorMiddleware";
 
 dotenv.config();
 
@@ -17,7 +17,6 @@ app.get("/hello", (req: Request, res: Response) => {
 });
 
 app.use("/package", PackageRouter);
-app.use("/sensor", SensorRouter);
 
 app.get("/test", (req: Request, res: Response) => {
   res.json({
@@ -35,7 +34,7 @@ app.get("/test", (req: Request, res: Response) => {
 
 async function testConnection() {
   try {
-    const result = await executeQuery("SELECT * FROM profile");
+    const result = await executeQuery("SELECT * FROM package");
     console.log("Database time:", result);
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -47,6 +46,8 @@ async function testConnection() {
 }
 
 testConnection();
+
+app.use(ErrorMiddleware.notFoundHandler, ErrorMiddleware.errorHandler);
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);

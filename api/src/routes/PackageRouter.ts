@@ -4,6 +4,6 @@ import express from "express";
 
 const router = express.Router();
 
-router.post("/", PackageValidator.create, PackageContoller.create);
+router.post("/", PackageValidator.create.body, PackageContoller.create);
 
 export default router;

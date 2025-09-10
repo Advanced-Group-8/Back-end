@@ -58,8 +58,3 @@ const SensorValidator = {
 };
 
 export default SensorValidator;
-
-
-
-
-

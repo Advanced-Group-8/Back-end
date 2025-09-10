@@ -8,6 +8,8 @@ export type Profile = {
   updatedAt: string; // ISO timestamp
 };
 
+export type GetProfileById = { id: NonNullable<Profile["id"]> };
+
 export type Address = {
   id: number;
   street: string;
@@ -22,7 +24,8 @@ export type PackageStatus =
   | "pending" // Package created but not yet shipped
   | "in_transit" // Package is on its way
   | "delivered" // Package delivered to recipient
-  | "cancelled";
+  | "cancelled"
+  | "out_for_delivery";
 
 export type Package = {
   id?: number;
@@ -44,18 +47,20 @@ export type CreatePackage = Omit<Package, "id" | "createdAt" | "updatedAt">;
 
 export type GetPackageById = { id: NonNullable<Package["id"]> };
 
+export type GetPackageDeviceId = { deviceId: NonNullable<Package["deviceId"]> };
+
 export type GetPackages = Pick<Package, "senderId" | "receiverId"> &
   Partial<Pick<Package, "currentCarrierId" | "status">> & { senderAddress: Partial<Address> } & {
     receiverAddress: Partial<Address>;
   };
 
 export type CreatePackagePayload = {
+  senderId: Package["senderId"];
+  receiverId: Package["receiverId"];
+  currentCarrierId: Package["currentCarrierId"];
+  deviceId: Package["deviceId"];
   senderAddress: CreateAddress;
   receiverAddress: CreateAddress;
-  packageInfo: Pick<
-    CreatePackage,
-    "receiverId" | "senderId" | "currentCarrierId" | "deviceId" | "trackingCode" | "eta"
-  >;
 };
 
 export type ContactInfo = {

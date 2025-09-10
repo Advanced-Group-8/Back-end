@@ -1,3 +1,4 @@
+import { CreatePackageRequest } from "@/types/requestTypes";
 import PackageService from "../services/PackageService";
 import { Package, CreatePackagePayload } from "../types/types";
 import { Request, Response } from "express";
@@ -5,7 +6,7 @@ import { Request, Response } from "express";
 type PackageRequest = Request<{}, {}, CreatePackagePayload>;
 
 const PackageContoller = {
-  create: async (req: PackageRequest, res: Response) => {
+  create: async (req: CreatePackageRequest, res: Response) => {
     try {
       const packageData: CreatePackagePayload = req.body;
 
