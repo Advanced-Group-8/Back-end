@@ -24,7 +24,8 @@ export type PackageStatus =
   | "pending" // Package created but not yet shipped
   | "in_transit" // Package is on its way
   | "delivered" // Package delivered to recipient
-  | "cancelled";
+  | "cancelled"
+  | "out_for_delivery";
 
 export type Package = {
   id?: number;
