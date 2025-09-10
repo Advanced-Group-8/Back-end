@@ -1,58 +1,90 @@
-import SensorModel from "../models/SensorModels";
-import { TemperatureSensor, HumiditySensor, LocationSensor } from "../types/types";
+import SensorModel from "@/src/models/SensorModels.js";
+import { TemperatureSensor, HumiditySensor, LocationSensor } from "@/src/types/types.js";
 
 const SensorService = {
-  createTemperature: async (temperatureData: TemperatureSensor) => {
-    return await SensorModel.createTemperature(temperatureData);
-  },
+    // Temperature services
+    createTemperature: async (temperatureData: TemperatureSensor): Promise<TemperatureSensor> => {
+        try {
+            return await SensorModel.createTemperature(temperatureData);
+        } catch (error) {
+            throw error;
+        }
+    },
 
-  getTemperatureByPackage: async (packageId: number) => {
-    return await SensorModel.getTemperatureByPackage(packageId);
-  },
+    getTemperatureHistory: async (packageId: number): Promise<TemperatureSensor[]> => {
+        try {
+            return await SensorModel.getTemperatureByPackage(packageId);
+        } catch (error) {
+            throw error;
+        }
+    },
 
-  createHumidity: async (humidityData: HumiditySensor) => {
-    return await SensorModel.createHumidity(humidityData);
-  },
+    getLatestTemperature: async (packageId: number): Promise<TemperatureSensor | null> => {
+        try {
+            return await SensorModel.getLatestTemperature(packageId);
+        } catch (error) {
+            throw error;
+        }
+    },
 
-  getHumidityByPackage: async (packageId: number) => {
-    return await SensorModel.getHumidityByPackage(packageId);
-  },
+    // Humidity services
+    createHumidity: async (humidityData: HumiditySensor): Promise<HumiditySensor> => {
+        try {
+            return await SensorModel.createHumidity(humidityData);
+        } catch (error) {
+            throw error;
+        }
+    },
 
-  createLocation: async (locationData: LocationSensor) => {
-    return await SensorModel.createLocation(locationData);
-  },
+    getHumidityHistory: async (packageId: number): Promise<HumiditySensor[]> => {
+        try {
+            return await SensorModel.getHumidityByPackage(packageId);
+        } catch (error) {
+            throw error;
+        }
+    },
 
-  getLocationByPackage: async (packageId: number) => {
-    return await SensorModel.getLocationByPackage(packageId);
-  },
+    getLatestHumidity: async (packageId: number): Promise<HumiditySensor | null> => {
+        try {
+            return await SensorModel.getLatestHumidity(packageId);
+        } catch (error) {
+            throw error;
+        }
+    },
 
-  getAllSensorsByPackage: async (packageId: number) => {
-    const [temperature, humidity, location] = await Promise.all([
-      SensorModel.getHumidityByPackage(packageId),
-      SensorModel.getTemperatureByPackage(packageId),
-      SensorModel.getLocationByPackage(packageId),
-    ]);
+    // Location services
+    createLocation: async (locationData: LocationSensor): Promise<LocationSensor> => {
+        try {
+            return await SensorModel.createLocation(locationData);
+        } catch (error) {
+            throw error;
+        }
+    },
 
-    return {
-      temperature,
-      humidity,
-      location,
-    };
-  },
+    getLocationHistory: async (packageId: number): Promise<LocationSensor[]> => {
+        try {
+            return await SensorModel.getLocationByPackage(packageId);
+        } catch (error) {
+            throw error;
+        }
+    },
 
-  getLatestReadings: async (packageId: number) => {
-    const [latestTemp, latestHumidity, latestLocation] = await Promise.all([
-      SensorModel.getlatestHumidity(packageId),
-      SensorModel.getLatestLocation(packageId),
-      SensorModel.getLatestTemperature(packageId),
-    ]);
+    getLatestLocation: async (packageId: number): Promise<LocationSensor | null> => {
+        try {
+            return await SensorModel.getLatestLocation(packageId);
+        } catch (error) {
+            throw error;
+        }
+    },
 
-    return {
-      temperature: latestTemp,
-      humidity: latestHumidity,
-      location: latestLocation,
-    };
-  },
+    // Combined sensor data
+    getAllSensorData: async (packageId: number) => {
+        try {
+            return await SensorModel.getAllSensorDataByPackage(packageId);
+        } catch (error) {
+            throw error;
+        }
+    }
 };
 
 export default SensorService;

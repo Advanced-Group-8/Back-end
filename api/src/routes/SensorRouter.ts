@@ -1,19 +1,30 @@
 import express from "express";
-import SensorController from "../controllers/SensorController";
-import SensorValidator from "../validators/SensorValidator";
+import SensorController from "@/src/controllers/SensorController.js";
+import SensorValidator from "@/src/validators/SensorValidator.js";
 
 const router = express.Router();
 
+// Test endpoint
+router.get("/test", (req, res) => {
+  res.json({ message: "Sensor router works!" });
+});
+
+// Temperature endpoints
 router.post("/temperature", SensorValidator.createTemperature, SensorController.createTemperature);
-router.get("/temperature/:packageId", SensorController.getTemperatureByPackage);
+router.get("/temperature/:packageId/history", SensorController.getTemperatureHistory);
+router.get("/temperature/:packageId/latest", SensorController.getLatestTemperature);
 
+// Humidity endpoints
 router.post("/humidity", SensorValidator.createHumidity, SensorController.createHumidity);
-router.get("/humidity/:packageId", SensorController.getHumidityByPackage);
+router.get("/humidity/:packageId/history", SensorController.getHumidityHistory);
+router.get("/humidity/:packageId/latest", SensorController.getLatestHumidity);
 
+// Location endpoints
 router.post("/location", SensorValidator.createLocation, SensorController.createLocation);
-router.get("/location/:packageId", SensorController.getLocationByPackage);
+router.get("/location/:packageId/history", SensorController.getLocationHistory);
+router.get("/location/:packageId/latest", SensorController.getLatestLocation);
 
-router.get("/all/:packageId", SensorController.getAllSensorsByPackage);
-router.get("/latest/:packageId", SensorController.getLatestReadings);
+// Combined sensor data
+router.get("/:packageId/all", SensorController.getAllSensorData);
 
 export default router;

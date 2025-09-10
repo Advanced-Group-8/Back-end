@@ -75,4 +75,41 @@ export type PackageTracking = {
   createdAt: string;
 };
 
+// ...existing code...
+
+// Lägg till dessa sensor types baserat på din databas
+export type TemperatureSensor = {
+  id?: number;
+  packageId: number;
+  temperature: number;
+  createdAt?: string;
+};
+
+export type HumiditySensor = {
+  id?: number;
+  packageId: number;
+  humidity: number;
+  createdAt?: string;
+};
+
+export type LocationSensor = {
+  id?: number;
+  packageId: number;
+  lat: number;
+  long: number; // Obs: mockdata använder "lng" i databas men "long" i kod
+  createdAt?: string;
+};
+
+export type SensorReading = {
+  id?: number;
+  packageId: number;
+  sensorType: 'temperature' | 'humidity' | 'location';
+  value: number;
+  lat?: number;
+  long?: number;
+  createdAt?: string;
+};
+
+// ...existing code...
+
 export type CreatePackageTracking = Omit<PackageTracking, "id" | "createdAt">;

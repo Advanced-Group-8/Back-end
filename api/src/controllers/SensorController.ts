@@ -1,95 +1,126 @@
-import SensorService from "../services/SensorService";
-import { TemperatureSensor, HumiditySensor, LocationSensor } from "../types/types";
-import { Request, Response } from "express";
-
-type SensorRequest = Request<{}, {}, TemperatureSensor | HumiditySensor | LocationSensor>;
-type SensorParamsRequest = Request<{ packageId: string }>;
+import SensorService from "@/src/services/SensorService.js";
+import { TemperatureSensor, HumiditySensor, LocationSensor } from "@/src/types/types.js"; // Lägg till detta
+import { Request, Response, NextFunction } from "express";
 
 const SensorController = {
-  // Temperature endpoints
-  createTemperature: async (req: Request<{}, {}, TemperatureSensor>, res: Response) => {
-    try {
-      const temperatureData: TemperatureSensor = req.body;
-      const created = await SensorService.createTemperature(temperatureData);
-      return res.status(201).json(created);
-    } catch (error) {
-      throw error;
-    }
-  },
+    // Temperature endpoints
+    createTemperature: async (req: Request<{}, {}, TemperatureSensor>, res: Response, next: NextFunction) => {
+        try {
+            const temperatureData = req.body;
+            const result = await SensorService.createTemperature(temperatureData);
+            return res.status(201).json(result);
+        } catch (error) {
+            next(error);
+        }
+    },
 
-  getTemperatureByPackage: async (req: SensorParamsRequest, res: Response) => {
-    try {
-      const packageId = parseInt(req.params.packageId);
-      const readings = await SensorService.getTemperatureByPackage(packageId);
-      return res.status(200).json(readings);
-    } catch (error) {
-      throw error;
-    }
-  },
+    getTemperatureHistory: async (req: Request<{ packageId: string }>, res: Response, next: NextFunction) => {
+        try {
+            const packageId = parseInt(req.params.packageId);
+            const result = await SensorService.getTemperatureHistory(packageId);
+            return res.status(200).json(result);
+        } catch (error) {
+            next(error);
+        }
+    },
 
-  // Humidity endpoints
-  createHumidity: async (req: Request<{}, {}, HumiditySensor>, res: Response) => {
-    try {
-      const humidityData: HumiditySensor = req.body;
-      const created = await SensorService.createHumidity(humidityData);
-      return res.status(201).json(created);
-    } catch (error) {
-      throw error;
-    }
-  },
+    getLatestTemperature: async (req: Request<{ packageId: string }>, res: Response, next: NextFunction) => {
+        try {
+            const packageId = parseInt(req.params.packageId);
+            const result = await SensorService.getLatestTemperature(packageId);
+            
+            if (!result) {
+                return res.status(404).json({ message: "No temperature data found for this package" });
+            }
+            
+            return res.status(200).json(result);
+        } catch (error) {
+            next(error);
+        }
+    },
 
-  getHumidityByPackage: async (req: SensorParamsRequest, res: Response) => {
-    try {
-      const packageId = parseInt(req.params.packageId);
-      const readings = await SensorService.getHumidityByPackage(packageId);
-      return res.status(200).json(readings);
-    } catch (error) {
-      throw error;
-    }
-  },
+    // Humidity endpoints
+    createHumidity: async (req: Request<{}, {}, HumiditySensor>, res: Response, next: NextFunction) => {
+        try {
+            const humidityData = req.body;
+            const result = await SensorService.createHumidity(humidityData);
+            return res.status(201).json(result);
+        } catch (error) {
+            next(error);
+        }
+    },
 
-  // Location endpoints
-  createLocation: async (req: Request<{}, {}, LocationSensor>, res: Response) => {
-    try {
-      const locationData: LocationSensor = req.body;
-      const created = await SensorService.createLocation(locationData);
-      return res.status(201).json(created);
-    } catch (error) {
-      throw error;
-    }
-  },
+    getHumidityHistory: async (req: Request<{ packageId: string }>, res: Response, next: NextFunction) => {
+        try {
+            const packageId = parseInt(req.params.packageId);
+            const result = await SensorService.getHumidityHistory(packageId);
+            return res.status(200).json(result);
+        } catch (error) {
+            next(error);
+        }
+    },
 
-  getLocationByPackage: async (req: SensorParamsRequest, res: Response) => {
-    try {
-      const packageId = parseInt(req.params.packageId);
-      const readings = await SensorService.getLocationByPackage(packageId);
-      return res.status(200).json(readings);
-    } catch (error) {
-      throw error;
-    }
-  },
+    getLatestHumidity: async (req: Request<{ packageId: string }>, res: Response, next: NextFunction) => {
+        try {
+            const packageId = parseInt(req.params.packageId);
+            const result = await SensorService.getLatestHumidity(packageId);
+            
+            if (!result) {
+                return res.status(404).json({ message: "No humidity data found for this package" });
+            }
+            
+            return res.status(200).json(result);
+        } catch (error) {
+            next(error);
+        }
+    },
 
-  // Get all sensor data for a package
-  getAllSensorsByPackage: async (req: SensorParamsRequest, res: Response) => {
-    try {
-      const packageId = parseInt(req.params.packageId);
-      const allSensors = await SensorService.getAllSensorsByPackage(packageId);
-      return res.status(200).json(allSensors);
-    } catch (error) {
-      throw error;
-    }
-  },
+    // Location endpoints
+    createLocation: async (req: Request<{}, {}, LocationSensor>, res: Response, next: NextFunction) => {
+        try {
+            const locationData = req.body;
+            const result = await SensorService.createLocation(locationData);
+            return res.status(201).json(result);
+        } catch (error) {
+            next(error);
+        }
+    },
 
-  // Get latest readings for a package
-  getLatestReadings: async (req: SensorParamsRequest, res: Response) => {
-    try {
-      const packageId = parseInt(req.params.packageId);
-      const latest = await SensorService.getLatestReadings(packageId);
-      return res.status(200).json(latest);
-    } catch (error) {
-      throw error;
+    getLocationHistory: async (req: Request<{ packageId: string }>, res: Response, next: NextFunction) => {
+        try {
+            const packageId = parseInt(req.params.packageId);
+            const result = await SensorService.getLocationHistory(packageId);
+            return res.status(200).json(result);
+        } catch (error) {
+            next(error);
+        }
+    },
+
+    getLatestLocation: async (req: Request<{ packageId: string }>, res: Response, next: NextFunction) => {
+        try {
+            const packageId = parseInt(req.params.packageId);
+            const result = await SensorService.getLatestLocation(packageId);
+            
+            if (!result) {
+                return res.status(404).json({ message: "No location data found for this package" });
+            }
+            
+            return res.status(200).json(result);
+        } catch (error) {
+            next(error);
+        }
+    },
+
+    // Combined sensor data
+    getAllSensorData: async (req: Request<{ packageId: string }>, res: Response, next: NextFunction) => {
+        try {
+            const packageId = parseInt(req.params.packageId);
+            const result = await SensorService.getAllSensorData(packageId);
+            return res.status(200).json(result);
+        } catch (error) {
+            next(error);
+        }
     }
-  },
 };
 
 export default SensorController;
