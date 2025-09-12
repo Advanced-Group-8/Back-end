@@ -80,8 +80,11 @@ export type PackageTracking = {
   createdAt: string;
 };
 
-// ...existing code...
-
-// ...existing code...
-
 export type CreatePackageTracking = Omit<PackageTracking, "id" | "createdAt">;
+
+export type PackageTrackingGroup = {
+  deviceId: PackageTracking["deviceId"];
+  readings: PackageTracking[];
+};
+
+export type GetPackageTrackingByDeviceId = { deviceId: NonNullable<PackageTracking["deviceId"]> };
