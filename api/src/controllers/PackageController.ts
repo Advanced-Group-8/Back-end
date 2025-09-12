@@ -2,6 +2,7 @@ import {
   CreatePackageRequest,
   GetPackageByDeviceIdRequest,
   GetPackageByIdRequest,
+  GetPackagesRequest,
 } from "@/types/requestTypes";
 import PackageService from "../services/PackageService";
 import { NextFunction, Request, Response } from "express";
@@ -9,7 +10,7 @@ import { ApiResponse } from "@/types/responseTypes";
 import { extractGetPackagesQuery, extractPackageFilter } from "@/utils/request";
 
 const PackageContoller = {
-  get: async (req: Request, _res: Response, next: NextFunction) => {
+  get: async (req: GetPackagesRequest, _res: Response, next: NextFunction) => {
     const filters = extractGetPackagesQuery(req);
 
     try {

@@ -3,6 +3,7 @@ import { NextFunction, Response } from "express";
 import { BadRequestError, NotFoundError } from "@/errors/Error";
 import {
   CreatePackageRequest,
+  GetPackageByDeviceIdRequest,
   GetPackageByIdRequest,
   GetPackagesRequest,
 } from "@/types/requestTypes";
@@ -11,6 +12,7 @@ import { GetPackageById, GetPackageByDeviceId } from "@/types/types";
 import PackageService from "@/services/PackageService";
 import {
   createPackageBodySchema,
+  getPackageByDeviceIdParamsSchema,
   getPackageByIdParamsSchema,
   getPackagesQuerySchema,
 } from "@/schemas/validation/packageValidationSchemas";
@@ -81,8 +83,27 @@ const PackageValidator = {
       }
     },
   },
+  getByDeviceId: {
+    params: async (req: GetPackageByDeviceIdRequest, _res: Response, next: NextFunction) => {
+      const payload = req.params;
+
+      try {
+        getPackageByDeviceIdParamsSchema.parse(payload);
+
+        await PackageValidator.hasDeviceId({ deviceId: payload.deviceId });
+
+        next();
+      } catch (err: unknown) {
+        if (err instanceof ZodError) {
+          return next(new BadRequestError(JSON.stringify(err.errors)));
+        }
+
+        return next(err);
+      }
+    },
+  },
   exists: async (payload: GetPackageById) => {
-    const packageId = (await PackageService.getById(payload)).id;
+    const packageId = (await PackageService.getById(payload))?.id;
 
     if (!packageId) {
       throw new NotFoundError(`No package with id '${payload.id}' found`);
@@ -91,7 +112,7 @@ const PackageValidator = {
     return packageId;
   },
   hasDeviceId: async ({ deviceId }: GetPackageByDeviceId) => {
-    const packageId = (await PackageService.getByDeviceId({ deviceId })).id;
+    const packageId = (await PackageService.getByDeviceId({ deviceId }))?.id;
 
     if (!packageId) {
       throw new NotFoundError(`No package with deviceId '${deviceId}' found`);

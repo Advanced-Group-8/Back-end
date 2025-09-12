@@ -1,9 +1,12 @@
 import { GetPackagesWithFilter, PackageFilter } from "@/types/types";
 import { parseJson } from ".";
-import { Request } from "express";
-import { GetPackageByDeviceIdRequest, GetPackageByIdRequest } from "@/types/requestTypes";
+import {
+  GetPackageByDeviceIdRequest,
+  GetPackageByIdRequest,
+  GetPackagesRequest,
+} from "@/types/requestTypes";
 
-export const extractGetPackagesQuery = (req: Request): GetPackagesWithFilter => {
+export const extractGetPackagesQuery = (req: GetPackagesRequest): GetPackagesWithFilter => {
   const query = req.query;
 
   return {

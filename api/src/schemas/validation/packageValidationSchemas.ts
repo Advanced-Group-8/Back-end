@@ -110,3 +110,10 @@ export const getPackageByIdParamsSchema = z.object({
     .nonempty({ message: "'id' is required" })
     .transform(Number),
 });
+
+export const getPackageByDeviceIdParamsSchema = z.object({
+  deviceId: z
+    .string({ message: "'device' is required" })
+    .nonempty({ message: "'device' is required" })
+    .transform(Number),
+});
