@@ -6,15 +6,21 @@ export type CreateAddress = Omit<AddressTable, "id">;
 
 export type CreatePackage = Omit<PackageTable, "id" | "createdAt" | "updatedAt">;
 
-export type GetPackageById = { id: NonNullable<PackageTable["id"]> };
+export type GetPackageById = { id: NonNullable<PackageTable["id"]>; readingsLimit?: number };
 
-export type GetPackageDeviceId = { deviceId: NonNullable<PackageTable["deviceId"]> };
+export type GetPackageDeviceId = {
+  deviceId: NonNullable<PackageTable["deviceId"]>;
+  readingsLimit?: number;
+};
 
 export type GetPackages = Pick<PackageTable, "senderId" | "receiverId"> &
   Partial<Pick<PackageTable, "currentCarrierId" | "status">> & {
     senderAddress: Partial<AddressTable>;
   } & {
     receiverAddress: Partial<AddressTable>;
+  } & {
+    limit?: number;
+    readingsLimit?: number;
   };
 
 export type CreatePackagePayload = {
@@ -36,3 +42,5 @@ export type PackageTrackingGroup = {
 export type GetPackageTrackingByDeviceId = {
   deviceId: NonNullable<PackageTrackingTable["deviceId"]>;
 };
+
+export type PackageWithReadings = PackageTable & { readings: PackageTrackingTable[] };
