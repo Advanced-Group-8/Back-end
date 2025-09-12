@@ -6,7 +6,7 @@ const ResponseMiddleware = {
     if (isOkApiResponse(payload)) {
       const { statusCode, message, data } = payload;
 
-      return res.status(statusCode).json({ statusCode, message, data, success: true });
+      return res.status(statusCode).json({ message, data, success: true });
     }
 
     return next(payload);

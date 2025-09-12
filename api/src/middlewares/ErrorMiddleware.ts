@@ -21,7 +21,7 @@ const ErrorMiddleware = {
     console.error(err);
 
     res.status(500).json({
-      message: "Internal server error",
+      message: "Internal server errorkkkkk",
       success: false,
     });
   },

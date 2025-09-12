@@ -9,6 +9,7 @@ import { executeQuery, getRandomETA, getRandomTrackingCode, omit } from "@/utils
 import AddressService from "./AddressService";
 import { Package } from "@/types/responseTypes";
 import ProfileService from "./ProfileService";
+import { pool } from "@/db/config";
 
 const PackageService = {
   get: async (payload: GetPackagesWithFilter) => {
@@ -28,51 +29,46 @@ const PackageService = {
     senderAddress,
     receiverAddress,
   }: CreatePackagePayload): Promise<Package> => {
-    try {
-      await executeQuery("BEGIN;");
+    // 1. Create addresses first
+    const { id: senderAddressId } = await AddressService.create(senderAddress);
+    const { id: receiverAddressId } = await AddressService.create(receiverAddress);
 
-      const [{ id: senderAddressId }, { id: receiverAddressId }, sender, receiver, currentCarrier] =
-        await Promise.all([
-          AddressService.create(senderAddress),
-          AddressService.create(receiverAddress),
-          ProfileService.getProfile({ id: senderId }),
-          ProfileService.getProfile({ id: receiverId }),
-          ProfileService.getProfile({ id: currentCarrierId }),
-        ]);
+    // 2. Fetch profiles
+    const [sender, receiver, currentCarrier] = await Promise.all([
+      ProfileService.getProfile({ id: senderId }),
+      ProfileService.getProfile({ id: receiverId }),
+      ProfileService.getProfile({ id: currentCarrierId }),
+    ]);
 
-      const createdPackage = await PackageModel.create({
-        senderId,
-        receiverId,
-        senderAddressId,
-        receiverAddressId,
-        currentCarrierId,
-        trackingCode: getRandomTrackingCode(),
-        deviceId,
-        status: "pending",
-        eta: getRandomETA(),
-      });
+    // 3. Insert package
+    const createdPackage = await PackageModel.create({
+      senderId,
+      receiverId,
+      senderAddressId,
+      receiverAddressId,
+      currentCarrierId,
+      trackingCode: getRandomTrackingCode(),
+      deviceId,
+      status: "pending",
+      eta: getRandomETA(),
+    });
 
-      await executeQuery("COMMIT;");
-
-      return {
-        ...omit(createdPackage, [
-          "senderId",
-          "receiverId",
-          "currentCarrierId",
-          "senderAddressId",
-          "receiverAddressId",
-        ]),
-        sender,
-        receiver,
-        currentCarrier,
-        senderAddress: { id: senderAddressId, ...senderAddress },
-        receiverAddress: { id: receiverAddressId, ...receiverAddress },
-        readings: [],
-      } as Package;
-    } catch (err) {
-      await executeQuery("ROLLBACK;");
-      throw err;
-    }
+    // 4. Return full package object
+    return {
+      ...omit(createdPackage, [
+        "senderId",
+        "receiverId",
+        "currentCarrierId",
+        "senderAddressId",
+        "receiverAddressId",
+      ]),
+      sender,
+      receiver,
+      currentCarrier,
+      senderAddress: { id: senderAddressId, ...senderAddress },
+      receiverAddress: { id: receiverAddressId, ...receiverAddress },
+      readings: [],
+    } as Package;
   },
 };
 
