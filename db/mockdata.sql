@@ -1,42 +1,46 @@
--- Mock Profiles (Users)
-INSERT INTO profile (email, password_hash, role, company_name)
+INSERT INTO profile (email, name, password_hash, role, company_name)
 VALUES (
         'john.doe@example.com',
+        'John Doe',
         '$2b$10$abcdefghijklmnopqrstuvwxyz',
         'customer',
         'Acme AB'
     ),
     (
         'jane.smith@logistics.com',
+        'Jane Smith',
         '$2b$10$zyxwvutsrqponmlkjihgfedcba',
         'carrier',
         'SnabbTransport AB'
     ),
     (
         'admin@logi.com',
+        'Admin User',
         '$2b$10$1234567890abcdefghijklmnop',
         'admin',
         'Logi Systems'
     ),
     (
         'erik.karlsson@company.se',
+        'Erik Karlsson',
         '$2b$10$qwertyuiopasdfghjklzxcvbnm',
         'customer',
         'Tech Solutions AB'
     ),
     (
         'maria.olsson@transport.se',
+        'Maria Olsson',
         '$2b$10$mnbvcxzlkjhgfdsapoiuytrewq',
         'carrier',
         'Nordic Transport AB'
     ),
     (
         'customer@test.com',
+        'Test Customer',
         '$2b$10$testhashedpassword123456789',
         'customer',
         'Test Företag'
     );
--- Mock Addresses
 INSERT INTO address (street, city, postal_code, country)
 VALUES ('Kungsgatan 1', 'Stockholm', '11143', 'Sweden'),
     ('Götgatan 25', 'Stockholm', '11621', 'Sweden'),
@@ -51,15 +55,13 @@ VALUES ('Kungsgatan 1', 'Stockholm', '11143', 'Sweden'),
         'Sweden'
     ),
     ('Vasagatan 12', 'Göteborg', '41137', 'Sweden');
--- Mock Contact Info
-INSERT INTO contactInfo (profile_id, phone, address)
-VALUES (1, '+46701234567', 'Kungsgatan 1, Stockholm'),
-    (2, '+46709876543', 'Götgatan 25, Stockholm'),
-    (3, '+46705555555', 'Avenyn 15, Göteborg'),
-    (4, '+46701111111', 'Malmövägen 8, Malmö'),
-    (5, '+46702222222', 'Storgatan 42, Uppsala'),
-    (6, '+46703333333', 'Hamngatan 3, Helsingborg');
--- Mock Packages
+INSERT INTO contactInfo (profile_id, address_id, phone)
+VALUES (1, 1, '+46701234567'),
+    (2, 2, '+46709876543'),
+    (3, 3, '+46705555555'),
+    (4, 4, '+46701111111'),
+    (5, 5, '+46702222222'),
+    (6, 6, '+46703333333');
 INSERT INTO package (
         sender_id,
         receiver_id,
@@ -126,7 +128,7 @@ VALUES (
         'TRK4444-5555-6666-7777',
         '2024-09-08 13:20:00'
     );
--- Mock Package Tracking (GPS + temperature + humidity)
+-- Package 1 (DEVICE001)
 INSERT INTO package_tracking (
         device_id,
         lat,
@@ -135,8 +137,7 @@ INSERT INTO package_tracking (
         humidity,
         created_at
     )
-VALUES -- Package 1 tracking
-    (
+VALUES (
         'DEVICE001',
         59.334591,
         18.063240,
@@ -146,22 +147,30 @@ VALUES -- Package 1 tracking
     ),
     (
         'DEVICE001',
-        58.756416,
-        16.628838,
-        2.8,
-        47.8,
-        '2024-09-07 12:30:00'
+        59.335000,
+        18.064000,
+        2.7,
+        46.0,
+        '2024-09-07 12:00:00'
     ),
     (
         'DEVICE001',
-        55.604981,
-        13.003822,
-        3.2,
-        52.1,
-        '2024-09-07 18:45:00'
-    ),
-    -- Package 2 tracking
-    (
+        59.336000,
+        18.065500,
+        3.0,
+        47.5,
+        '2024-09-07 16:00:00'
+    );
+-- Package 2 (DEVICE002)
+INSERT INTO package_tracking (
+        device_id,
+        lat,
+        lng,
+        temperature,
+        humidity,
+        created_at
+    )
+VALUES (
         'DEVICE002',
         55.604981,
         13.003822,
@@ -171,14 +180,55 @@ VALUES -- Package 1 tracking
     ),
     (
         'DEVICE002',
-        59.334591,
-        18.063240,
+        55.605500,
+        13.004500,
         -0.8,
-        41.2,
-        '2024-09-04 15:30:00'
+        40.0,
+        '2024-09-04 13:30:00'
     ),
-    -- Package 4 tracking
     (
+        'DEVICE002',
+        55.606200,
+        13.005200,
+        -0.5,
+        41.2,
+        '2024-09-04 18:00:00'
+    );
+-- Package 3 (DEVICE003)
+INSERT INTO package_tracking (
+        device_id,
+        lat,
+        lng,
+        temperature,
+        humidity,
+        created_at
+    )
+VALUES (
+        'DEVICE003',
+        59.250000,
+        17.000000,
+        1.5,
+        50.0,
+        '2024-09-12 08:00:00'
+    ),
+    (
+        'DEVICE003',
+        59.251000,
+        17.001500,
+        1.7,
+        51.0,
+        '2024-09-12 12:00:00'
+    );
+-- Package 4 (DEVICE004)
+INSERT INTO package_tracking (
+        device_id,
+        lat,
+        lng,
+        temperature,
+        humidity,
+        created_at
+    )
+VALUES (
         'DEVICE004',
         56.048889,
         12.694444,
@@ -188,22 +238,30 @@ VALUES -- Package 1 tracking
     ),
     (
         'DEVICE004',
-        57.708870,
-        11.974560,
-        5.1,
-        58.3,
+        56.050000,
+        12.695500,
+        5.0,
+        57.0,
         '2024-09-08 11:45:00'
     ),
     (
         'DEVICE004',
-        55.604981,
-        13.003822,
+        56.051500,
+        12.696800,
         5.8,
         61.7,
         '2024-09-08 16:20:00'
-    ),
-    -- Package 5 tracking
-    (
+    );
+-- Package 5 (DEVICE005)
+INSERT INTO package_tracking (
+        device_id,
+        lat,
+        lng,
+        temperature,
+        humidity,
+        created_at
+    )
+VALUES (
         'DEVICE005',
         55.604981,
         13.003822,
@@ -213,9 +271,17 @@ VALUES -- Package 1 tracking
     ),
     (
         'DEVICE005',
-        59.334591,
-        18.063240,
+        55.605500,
+        13.004500,
+        2.0,
+        44.5,
+        '2024-09-06 12:15:00'
+    ),
+    (
+        'DEVICE005',
+        55.606200,
+        13.005200,
         2.1,
         45.1,
-        '2024-09-06 14:15:00'
+        '2024-09-06 18:00:00'
     );

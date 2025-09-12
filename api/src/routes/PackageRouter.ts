@@ -6,7 +6,11 @@ const router = express.Router();
 
 router.get("/:id", PackageValidator.getById.params, PackageContoller.getById);
 
-router.get("/:deviceId", PackageValidator.getByDeviceId.params, PackageContoller.getByDeviceId);
+router.get(
+  "/device/:deviceId",
+  PackageValidator.getByDeviceId.params,
+  PackageContoller.getByDeviceId
+);
 
 router.get("/", PackageValidator.get.query, PackageContoller.get);
 

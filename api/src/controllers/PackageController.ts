@@ -5,7 +5,7 @@ import {
   GetPackagesRequest,
 } from "@/types/requestTypes";
 import PackageService from "../services/PackageService";
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Response } from "express";
 import { ApiResponse } from "@/types/responseTypes";
 import { extractGetPackagesQuery, extractPackageFilter } from "@/utils/request";
 
@@ -42,6 +42,8 @@ const PackageContoller = {
   getByDeviceId: async (req: GetPackageByDeviceIdRequest, _res: Response, next: NextFunction) => {
     const { deviceId } = req.params;
     const filters = extractPackageFilter(req);
+
+    console.log("filters", filters);
 
     try {
       const foundPackage = await PackageService.getByDeviceId({ ...filters, deviceId });

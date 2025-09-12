@@ -17,8 +17,8 @@ const PackageService = {
   getById: async (payload: GetPackageByIdWithFilter) => {
     return await PackageModel.getById(payload);
   },
-  getByDeviceId: async ({ deviceId }: GetPackageByDeviceIdWithFilter) => {
-    return PackageModel.getByDeviceId({ deviceId });
+  getByDeviceId: async (payload: GetPackageByDeviceIdWithFilter) => {
+    return PackageModel.getByDeviceId(payload);
   },
   create: async ({
     senderId,

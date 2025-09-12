@@ -17,29 +17,23 @@ CREATE TABLE IF NOT EXISTS address (
 );
 CREATE TABLE IF NOT EXISTS package (
     id BIGSERIAL PRIMARY KEY,
-    sender_id BIGINT NOT NULL,
-    receiver_id BIGINT NOT NULL,
-    sender_address_id BIGINT NOT NULL,
-    receiver_address_id BIGINT NOT NULL,
-    current_carrier_id BIGINT NOT NULL,
+    sender_id BIGINT NOT NULL REFERENCES profile(id),
+    receiver_id BIGINT NOT NULL REFERENCES profile(id),
+    sender_address_id BIGINT NOT NULL REFERENCES address(id),
+    receiver_address_id BIGINT NOT NULL REFERENCES address(id),
+    current_carrier_id BIGINT NOT NULL REFERENCES profile(id),
     device_id VARCHAR(100) NOT NULL,
     status VARCHAR(50) NOT NULL,
     tracking_code VARCHAR(100) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    eta TIMESTAMP,
-    FOREIGN KEY (sender_id) REFERENCES profile (id),
-    FOREIGN KEY (receiver_id) REFERENCES profile (id),
-    FOREIGN KEY (current_carrier_id) REFERENCES profile (id),
-    FOREIGN KEY (sender_address_id) REFERENCES address (id),
-    FOREIGN KEY (receiver_address_id) REFERENCES address (id)
+    eta TIMESTAMP
 );
 CREATE TABLE IF NOT EXISTS contactInfo (
     id BIGSERIAL PRIMARY KEY,
-    profile_id BIGINT NOT NULL,
-    address_id BIGINT NOT NULL,
-    phone VARCHAR(20),
-    FOREIGN KEY (profile_id) REFERENCES profile (id) FOREIGN KEY (address_id) REFERENCES address (id)
+    profile_id BIGINT NOT NULL REFERENCES profile(id),
+    address_id BIGINT NOT NULL REFERENCES address(id),
+    phone VARCHAR(20)
 );
 CREATE TABLE IF NOT EXISTS package_tracking (
     id BIGSERIAL PRIMARY KEY,
