@@ -1,37 +1,32 @@
 import PackageTrackingService from "@/src/services/PackageTrackingService";
-import { PackageTracking } from "@/src/types/httpPayloadTypes";
+import {
+  CreatePackageTrackingRequest,
+  GetPackageTrackingByDeviceIdRequest,
+} from "@/types/requestTypes";
 import { Request, Response, NextFunction } from "express";
 
 const PackageTrackingController = {
-  // POST: Skapa tracking-data från IoT
-  create: async (req: Request<{}, {}, PackageTracking>, res: Response, next: NextFunction) => {
+  create: async (req: CreatePackageTrackingRequest, res: Response, next: NextFunction) => {
+    const payload = req.body;
+
     try {
-      const trackingData = req.body;
-      const result = await PackageTrackingService.create(trackingData);
+      const result = await PackageTrackingService.create(payload);
+
       return res.status(201).json(result);
     } catch (error) {
       next(error);
     }
   },
-  // GET: Hämta tracking-historik för en device
-  getByDeviceId: async (req: Request<{ deviceId: string }>, res: Response, next: NextFunction) => {
-    try {
-      const deviceId = req.params.deviceId;
-      const result = await PackageTrackingService.getByDevice(deviceId);
-      return res.status(200).json(result);
-    } catch (error) {
-      next(error);
-    }
-  },
-  // GET: Senaste tracking för en device
-  getLatest: async (req: Request<{ deviceId: string }>, res: Response, next: NextFunction) => {
-    try {
-      const deviceId = req.params.deviceId;
-      const result = await PackageTrackingService.getLatest(deviceId);
+  getByDeviceId: async (
+    req: GetPackageTrackingByDeviceIdRequest,
+    res: Response,
+    next: NextFunction
+  ) => {
+    const deviceId = req.params.deviceId;
+    const latest = req.query.latest === "true";
 
-      if (!result) {
-        return res.status(404).json({ message: "No tracking data found for this device" });
-      }
+    try {
+      const result = await PackageTrackingService.getByDevice({ deviceId, latest });
 
       return res.status(200).json(result);
     } catch (error) {

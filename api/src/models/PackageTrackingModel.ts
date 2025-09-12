@@ -19,47 +19,26 @@ const PackageTrackingModel = {
       )
     )[0];
   },
-  getByDevice: async ({ deviceId }: GetPackageTrackingByDeviceId): Promise<PackageTracking[]> => {
+  getByDevice: async ({
+    deviceId,
+    latest,
+  }: GetPackageTrackingByDeviceId & { latest?: boolean }): Promise<PackageTracking[]> => {
     return await executeQuery<PackageTracking>(
       `
         SELECT 
-            id, 
-            device_id as "deviceId", 
-            lat, 
-            lng, 
-            temperature, 
-            humidity, 
-            created_at as "createdAt"
+        id, 
+        device_id as "deviceId", 
+        lat, 
+        lng, 
+        temperature, 
+        humidity, 
+        created_at as "createdAt"
         FROM package_tracking 
         WHERE device_id = $1
         ORDER BY created_at DESC
+        ${latest ? "LIMIT 1" : ""}
     `,
       [deviceId]
-    );
-  },
-  getLatest: async ({
-    deviceId,
-  }: GetPackageTrackingByDeviceId): Promise<PackageTracking | null> => {
-    return (
-      (
-        await executeQuery<PackageTracking>(
-          `
-            SELECT 
-                id, 
-                device_id as "deviceId", 
-                lat, 
-                lng, 
-                temperature, 
-                humidity, 
-                created_at as "createdAt"
-            FROM package_tracking 
-            WHERE device_id = $1
-            ORDER BY created_at DESC
-            LIMIT 1
-        `,
-          [deviceId]
-        )
-      )[0] ?? null
     );
   },
   getAllGroupedByDeviceId: async (): Promise<PackageTrackingGroup[]> => {
