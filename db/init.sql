@@ -1,31 +1,30 @@
 CREATE TABLE IF NOT EXISTS profile (
     id BIGSERIAL PRIMARY KEY,
     email VARCHAR(255) NOT NULL UNIQUE,
+    name VARCHAR(255) NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
-    role VARCHAR(50),
-    company_name VARCHAR(100),
+    role VARCHAR(50) NOT NULL,
+    company_name VARCHAR(100) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
--- address MÅSTE komma före package (dependency)
 CREATE TABLE IF NOT EXISTS address (
     id BIGSERIAL PRIMARY KEY,
-    street VARCHAR(255),
-    city VARCHAR(100),
-    postal_code VARCHAR(20),
-    country VARCHAR(100)
+    street VARCHAR(255) NOT NULL,
+    city VARCHAR(100) NOT NULL,
+    postal_code VARCHAR(20) NOT NULL,
+    country VARCHAR(100) NOT NULL
 );
--- Nu kan package referera till både profile och address
 CREATE TABLE IF NOT EXISTS package (
     id BIGSERIAL PRIMARY KEY,
-    sender_id BIGINT,
-    receiver_id BIGINT,
-    sender_address_id BIGINT,
-    receiver_address_id BIGINT,
-    current_carrier_id BIGINT,
+    sender_id BIGINT NOT NULL,
+    receiver_id BIGINT NOT NULL,
+    sender_address_id BIGINT NOT NULL,
+    receiver_address_id BIGINT NOT NULL,
+    current_carrier_id BIGINT NOT NULL,
     device_id VARCHAR(100) NOT NULL,
-    status VARCHAR(50),
-    tracking_code VARCHAR(100),
+    status VARCHAR(50) NOT NULL,
+    tracking_code VARCHAR(100) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     eta TIMESTAMP,
@@ -37,17 +36,17 @@ CREATE TABLE IF NOT EXISTS package (
 );
 CREATE TABLE IF NOT EXISTS contactInfo (
     id BIGSERIAL PRIMARY KEY,
-    profile_id BIGINT,
+    profile_id BIGINT NOT NULL,
+    address_id BIGINT NOT NULL,
     phone VARCHAR(20),
-    address VARCHAR(255),
-    FOREIGN KEY (profile_id) REFERENCES profile (id)
+    FOREIGN KEY (profile_id) REFERENCES profile (id) FOREIGN KEY (address_id) REFERENCES address (id)
 );
 CREATE TABLE IF NOT EXISTS package_tracking (
     id BIGSERIAL PRIMARY KEY,
     device_id VARCHAR(100) NOT NULL,
-    lat DECIMAL(9, 6),
-    lng DECIMAL(9, 6),
-    temperature DOUBLE PRECISION,
-    humidity DOUBLE PRECISION,
+    lat DECIMAL(9, 6) NOT NULL,
+    lng DECIMAL(9, 6) NOT NULL,
+    temperature DOUBLE PRECISION NOT NULL,
+    humidity DOUBLE PRECISION NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

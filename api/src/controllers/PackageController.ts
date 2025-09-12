@@ -1,7 +1,7 @@
 import { CreatePackageRequest } from "@/types/requestTypes";
 import PackageService from "../services/PackageService";
 import { NextFunction, Response } from "express";
-import { ApiResponse } from "@/types/responseTypes";
+import { ApiResponse, Package } from "@/types/responseTypes";
 
 const PackageContoller = {
   create: async (req: CreatePackageRequest, _res: Response, next: NextFunction) => {

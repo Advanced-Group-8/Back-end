@@ -45,3 +45,9 @@ export const getRandomTrackingCode = (): string => {
 export const isApiResponse = (obj: unknown): obj is ApiResponse => {
   return typeof obj === "object" && obj !== null && "statusCode" in obj;
 };
+
+export const omit = <T extends Record<string, unknown>, K extends keyof T>(
+  obj: T,
+  keys: readonly K[]
+): Omit<T, K> =>
+  Object.fromEntries(Object.entries(obj).filter(([k]) => !keys.includes(k as K))) as Omit<T, K>;

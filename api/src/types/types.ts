@@ -1,90 +1,38 @@
-export type Profile = {
-  id?: number;
-  email: string;
-  passwordHash: string;
-  role?: string;
-  companyName?: string;
-  createdAt: string; // ISO timestamp
-  updatedAt: string; // ISO timestamp
-};
+import { AddressTable, PackageTable, PackageTrackingTable, ProfileTable } from "./dbTablesTypes";
 
-export type GetProfileById = { id: NonNullable<Profile["id"]> };
+export type GetProfileById = { id: NonNullable<ProfileTable["id"]> };
 
-export type Address = {
-  id: number;
-  street: string;
-  city: string;
-  postalCode: string;
-  country: string;
-};
+export type CreateAddress = Omit<AddressTable, "id">;
 
-export type CreateAddress = Omit<Address, "id">;
+export type CreatePackage = Omit<PackageTable, "id" | "createdAt" | "updatedAt">;
 
-export type PackageStatus =
-  | "pending" // Package created but not yet shipped
-  | "in_transit" // Package is on its way
-  | "delivered" // Package delivered to recipient
-  | "cancelled"
-  | "out_for_delivery";
+export type GetPackageById = { id: NonNullable<PackageTable["id"]> };
 
-export type Package = {
-  id?: number;
-  senderId: number; // FK → Profile.id
-  receiverId: number; // FK → Profile.id
-  senderAddressId: number; // FK → Address.id
-  receiverAddressId: number; // FK → Address.id
-  currentCarrierId: number;
-  deviceId: string;
-  status?: PackageStatus;
-  trackingCode?: string;
-  createdAt: string; // ISO timestamp
-  updatedAt: string; // ISO timestamp
-  eta?: string; // ISO timestamp
-  readings?: PackageTracking[];
-};
+export type GetPackageDeviceId = { deviceId: NonNullable<PackageTable["deviceId"]> };
 
-export type CreatePackage = Omit<Package, "id" | "createdAt" | "updatedAt">;
-
-export type GetPackageById = { id: NonNullable<Package["id"]> };
-
-export type GetPackageDeviceId = { deviceId: NonNullable<Package["deviceId"]> };
-
-export type GetPackages = Pick<Package, "senderId" | "receiverId"> &
-  Partial<Pick<Package, "currentCarrierId" | "status">> & { senderAddress: Partial<Address> } & {
-    receiverAddress: Partial<Address>;
+export type GetPackages = Pick<PackageTable, "senderId" | "receiverId"> &
+  Partial<Pick<PackageTable, "currentCarrierId" | "status">> & {
+    senderAddress: Partial<AddressTable>;
+  } & {
+    receiverAddress: Partial<AddressTable>;
   };
 
 export type CreatePackagePayload = {
-  senderId: Package["senderId"];
-  receiverId: Package["receiverId"];
-  currentCarrierId: Package["currentCarrierId"];
-  deviceId: Package["deviceId"];
+  senderId: PackageTable["senderId"];
+  receiverId: PackageTable["receiverId"];
+  currentCarrierId: PackageTable["currentCarrierId"];
+  deviceId: PackageTable["deviceId"];
   senderAddress: CreateAddress;
   receiverAddress: CreateAddress;
 };
 
-export type ContactInfo = {
-  id?: number;
-  profileId: number;
-  phone?: string;
-  address?: string;
-};
-
-export type PackageTracking = {
-  id: number;
-  deviceId: string;
-  lat: number;
-  lng: number;
-  temperature: number;
-  humidity: number;
-  createdAt: string;
-};
-
-export type CreatePackageTracking = Omit<PackageTracking, "id" | "createdAt">;
+export type CreatePackageTracking = Omit<PackageTrackingTable, "id" | "createdAt">;
 
 export type PackageTrackingGroup = {
-  deviceId: PackageTracking["deviceId"];
-  readings: PackageTracking[];
+  deviceId: PackageTrackingTable["deviceId"];
+  readings: PackageTrackingTable[];
 };
 
-export type GetPackageTrackingByDeviceId = { deviceId: NonNullable<PackageTracking["deviceId"]> };
+export type GetPackageTrackingByDeviceId = {
+  deviceId: NonNullable<PackageTrackingTable["deviceId"]>;
+};

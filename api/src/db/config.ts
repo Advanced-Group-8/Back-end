@@ -1,5 +1,6 @@
 import dotenv from "dotenv";
 import pkg from "pg";
+
 const { Pool } = pkg;
 
 dotenv.config();
@@ -11,6 +12,3 @@ console.log(DATABASE_URL);
 export const pool = new Pool({
   connectionString: DATABASE_URL,
 });
-
-
-

@@ -3,8 +3,8 @@ import {
   GetPackageById,
   GetPackageDeviceId,
   GetPackages,
-  Package,
 } from "@/src/types/types.js";
+import { PackageTable } from "@/types/dbTablesTypes";
 import { executeQuery } from "@/utils";
 
 const PackageModel = {
@@ -117,7 +117,7 @@ const PackageModel = {
     return result[0];
   },
   getByDeviceId: async ({ deviceId }: GetPackageDeviceId) => {
-    const result = await executeQuery<Package>(
+    const result = await executeQuery<PackageTable>(
       `
       SELECT 
         p.*,
@@ -157,12 +157,34 @@ const PackageModel = {
     eta,
   }: CreatePackage) => {
     return (
-      await executeQuery<Package>(
+      await executeQuery<PackageTable>(
         `
-            INSERT INTO package (sender_id, receiver_id, sender_address_id, receiver_address_id, current_carrier_id, device_id, status, tracking_code, eta)
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-            RETURNING *;
-          `,
+          INSERT INTO package (
+            sender_id, 
+            receiver_id, 
+            sender_address_id, 
+            receiver_address_id, 
+            current_carrier_id, 
+            device_id, 
+            status, 
+            tracking_code, 
+            eta
+          )
+          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+          RETURNING 
+            id,
+            sender_id AS "senderId",
+            receiver_id AS "receiverId",
+            sender_address_id AS "senderAddressId",
+            receiver_address_id AS "receiverAddressId",
+            current_carrier_id AS "currentCarrierId",
+            device_id AS "deviceId",
+            status,
+            tracking_code AS "trackingCode",
+            created_at AS "createdAt",
+            updated_at AS "updatedAt",
+            eta;
+        `,
         [
           senderId,
           receiverId,

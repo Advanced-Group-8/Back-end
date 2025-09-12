@@ -5,8 +5,10 @@ import {
   GetPackageDeviceId,
   GetPackages,
 } from "@/src/types/types.js";
-import { executeQuery, getRandomETA, getRandomTrackingCode } from "@/utils";
+import { executeQuery, getRandomETA, getRandomTrackingCode, omit } from "@/utils";
 import AddressService from "./AddressService";
+import { Package, PackageStatus } from "@/types/responseTypes";
+import ProfileService from "./ProfileService";
 
 const PackageService = {
   get: async (payload: GetPackages) => {
@@ -25,14 +27,18 @@ const PackageService = {
     deviceId,
     senderAddress,
     receiverAddress,
-  }: CreatePackagePayload): Promise<ReturnType<typeof PackageModel.create>> => {
+  }: CreatePackagePayload): Promise<Package> => {
     try {
       await executeQuery("BEGIN;");
 
-      const [{ id: senderAddressId }, { id: receiverAddressId }] = await Promise.all([
-        AddressService.create(senderAddress),
-        AddressService.create(receiverAddress),
-      ]);
+      const [{ id: senderAddressId }, { id: receiverAddressId }, sender, receiver, currentCarrier] =
+        await Promise.all([
+          AddressService.create(senderAddress),
+          AddressService.create(receiverAddress),
+          ProfileService.getProfile({ id: senderId }),
+          ProfileService.getProfile({ id: receiverId }),
+          ProfileService.getProfile({ id: currentCarrierId }),
+        ]);
 
       const createdPackage = await PackageModel.create({
         senderId,
@@ -48,7 +54,21 @@ const PackageService = {
 
       await executeQuery("COMMIT;");
 
-      return createdPackage;
+      return {
+        ...omit(createdPackage, [
+          "senderId",
+          "receiverId",
+          "currentCarrierId",
+          "senderAddressId",
+          "receiverAddressId",
+        ]),
+        sender,
+        receiver,
+        currentCarrier,
+        senderAddress: { id: senderAddressId, ...senderAddress },
+        receiverAddress: { id: receiverAddressId, ...receiverAddress },
+        readings: [],
+      } as Package;
     } catch (err) {
       await executeQuery("ROLLBACK;");
       throw err;
