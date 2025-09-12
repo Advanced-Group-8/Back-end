@@ -1,6 +1,7 @@
 import { PoolClient, QueryResult, QueryResultRow } from "pg";
 import { pool } from "../db/config";
 import { addDays } from "date-fns";
+import { ApiResponse } from "@/types/responseTypes";
 
 export const sanitizeValues = <T>(values: (string | T)[]): (string | T)[] => {
   return values.map((value) => (typeof value === "string" ? value.trim() : value));
@@ -39,4 +40,8 @@ export const getRandomTrackingCode = (): string => {
     Array.from({ length: 4 }, () => chars[Math.floor(Math.random() * chars.length)]).join("");
 
   return `${generateBlock()}-${generateBlock()}-${generateBlock()}-${generateBlock()}`;
+};
+
+export const isApiResponse = (obj: unknown): obj is ApiResponse => {
+  return typeof obj === "object" && obj !== null && "statusCode" in obj;
 };

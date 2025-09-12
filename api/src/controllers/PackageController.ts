@@ -1,20 +1,22 @@
 import { CreatePackageRequest } from "@/types/requestTypes";
 import PackageService from "../services/PackageService";
-import { Package, CreatePackagePayload } from "../types/types";
-import { Request, Response } from "express";
-
-type PackageRequest = Request<{}, {}, CreatePackagePayload>;
+import { NextFunction, Response } from "express";
+import { ApiResponse } from "@/types/responseTypes";
 
 const PackageContoller = {
-  create: async (req: CreatePackageRequest, res: Response) => {
+  create: async (req: CreatePackageRequest, _res: Response, next: NextFunction) => {
+    const payload = req.body;
+
     try {
-      const packageData: CreatePackagePayload = req.body;
+      const createdPackage = await PackageService.create(payload);
 
-      const createdPackage = await PackageService.create(packageData);
-
-      return res.status(201).json(createdPackage);
+      next({
+        statusCode: 201,
+        message: "Package created successfully",
+        data: createdPackage,
+      } as ApiResponse);
     } catch (error) {
-      //   return res.status(500).json({ message: "Server error" }); handle errors in middleware
+      next(error);
     }
   },
 };

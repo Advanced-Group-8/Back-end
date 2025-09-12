@@ -3,40 +3,52 @@ import {
   CreatePackageTrackingRequest,
   GetPackageTrackingByDeviceIdRequest,
 } from "@/types/requestTypes";
+import { ApiResponse } from "@/types/responseTypes";
 import { Request, Response, NextFunction } from "express";
 
 const PackageTrackingController = {
-  create: async (req: CreatePackageTrackingRequest, res: Response, next: NextFunction) => {
+  create: async (req: CreatePackageTrackingRequest, _res: Response, next: NextFunction) => {
     const payload = req.body;
 
     try {
-      const result = await PackageTrackingService.create(payload);
+      const createdPackageTracking = await PackageTrackingService.create(payload);
 
-      return res.status(201).json(result);
+      next({
+        statusCode: 201,
+        message: "Package tracking data registered successfully",
+        data: createdPackageTracking,
+      } as ApiResponse);
     } catch (error) {
       next(error);
     }
   },
   getByDeviceId: async (
     req: GetPackageTrackingByDeviceIdRequest,
-    res: Response,
+    _res: Response,
     next: NextFunction
   ) => {
     const deviceId = req.params.deviceId;
     const latest = req.query.latest === "true";
 
     try {
-      const result = await PackageTrackingService.getByDevice({ deviceId, latest });
+      const packageTrackings = await PackageTrackingService.getByDevice({ deviceId, latest });
 
-      return res.status(200).json(result);
+      next({
+        statusCode: 200,
+        data: packageTrackings,
+      } as ApiResponse);
     } catch (error) {
       next(error);
     }
   },
-  getAllGroupedByDeviceId: async (req: Request, res: Response, next: NextFunction) => {
+  getAllGroupedByDeviceId: async (_req: Request, _res: Response, next: NextFunction) => {
     try {
-      const deviceIds = await PackageTrackingService.getAllGroupedByDeviceId();
-      res.status(200).json(deviceIds);
+      const packageTrackings = await PackageTrackingService.getAllGroupedByDeviceId();
+
+      next({
+        statusCode: 200,
+        data: packageTrackings,
+      } as ApiResponse);
     } catch (error) {
       next(error);
     }

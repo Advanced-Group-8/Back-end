@@ -1,10 +1,10 @@
 import express, { Request, Response } from "express";
 import dotenv from "dotenv";
 import PackageRouter from "./routes/PackageRouter.js";
-import PackageTrackingRouter from "./routes/PackageTrackingRouter.js"; // Lägg till
+import PackageTrackingRouter from "./routes/PackageTrackingRouter.js";
 import "./db/config.js";
-import { executeQuery } from "./utils/index.js";
 import ErrorMiddleware from "./middlewares/ErrorMiddleware.js";
+import ResponseMiddleware from "./middlewares/ResponseMiddleware.js";
 
 dotenv.config();
 
@@ -34,32 +34,20 @@ app.get("/test", (req: Request, res: Response) => {
       createTracking: "POST /package-tracking",
       getTrackingByDevice: "GET /package-tracking/:deviceId",
       getLatestTracking: "GET /package-tracking/:deviceId/latest",
-      getAllGroupedByDeviceId: "GET /package-tracking/"
+      getAllGroupedByDeviceId: "GET /package-tracking/",
     },
   });
 });
 
-// ... rest of code ...
+// Custom response middleware (must come before notFound + errorHandler)
+app.use(ResponseMiddleware.respond);
 
+//404 handler - route not found
+app.use(ErrorMiddleware.notFoundHandler);
 
-async function testConnection() {
-  try {
-    const result = await executeQuery("SELECT * FROM package");
-    console.log("Database time:", result);
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      console.error("Connection test failed:", error.message);
-    } else {
-      console.error("Unknown error while testing connection:", error);
-    }
-  }
-}
-
-testConnection();
-
-app.use(ErrorMiddleware.notFoundHandler, ErrorMiddleware.errorHandler);
+//Generic error handler
+app.use(ErrorMiddleware.errorHandler);
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
-  console.log(`Test endpoint: http://localhost:${PORT}/test`);
 });
