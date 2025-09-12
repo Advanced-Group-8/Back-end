@@ -23,13 +23,6 @@ export type Address = {
   country: string;
 };
 
-export type PackageStatus =
-  | "pending"
-  | "in_transit"
-  | "delivered"
-  | "cancelled"
-  | "out_for_delivery";
-
 export type Package = {
   id: number;
   sender: Profile;
@@ -45,6 +38,13 @@ export type Package = {
   eta: string;
   readings: PackageTracking[];
 };
+
+export type PackageStatus =
+  | "pending"
+  | "in_transit"
+  | "delivered"
+  | "cancelled"
+  | "out_for_delivery";
 
 export type PackageTracking = {
   id: number;

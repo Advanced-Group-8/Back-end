@@ -1,8 +1,8 @@
 import {
   CreatePackage,
-  GetPackageById,
-  GetPackageDeviceId,
-  GetPackages,
+  GetPackagesWithFilter,
+  GetPackageByIdWithFilter,
+  GetPackageByDeviceIdWithFilter,
 } from "@/src/types/types.js";
 import { PackageTable } from "@/types/dbTablesTypes";
 import { Package } from "@/types/responseTypes";
@@ -18,7 +18,7 @@ const PackageModel = {
     receiverAddress,
     limit,
     readingsLimit,
-  }: GetPackages): Promise<Package[]> => {
+  }: GetPackagesWithFilter): Promise<Package[]> => {
     const filters: string[] = [];
     const values: (string | number)[] = [];
 
@@ -150,7 +150,7 @@ const PackageModel = {
 
     return await executeQuery<Package>(query, values);
   },
-  getById: async ({ id, readingsLimit }: GetPackageById): Promise<Package | null> => {
+  getById: async ({ id, readingsLimit }: GetPackageByIdWithFilter): Promise<Package | null> => {
     const values: (string | number)[] = [id];
     const readingsLimitClause = readingsLimit !== undefined ? `LIMIT $${values.length + 1}` : "";
 
@@ -245,7 +245,7 @@ const PackageModel = {
   getByDeviceId: async ({
     deviceId,
     readingsLimit,
-  }: GetPackageDeviceId): Promise<Package | null> => {
+  }: GetPackageByDeviceIdWithFilter): Promise<Package | null> => {
     const values: (string | number)[] = [deviceId];
     const readingsLimitClause = readingsLimit !== undefined ? `LIMIT $${values.length + 1}` : "";
 

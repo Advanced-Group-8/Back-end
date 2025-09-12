@@ -7,7 +7,7 @@ import {
   GetPackagesRequest,
 } from "@/types/requestTypes";
 import ProfileValidator from "./ProfileValidator";
-import { GetPackageById, GetPackageDeviceId } from "@/types/types";
+import { GetPackageById, GetPackageByDeviceId } from "@/types/types";
 import PackageService from "@/services/PackageService";
 import {
   createPackageBodySchema,
@@ -90,7 +90,7 @@ const PackageValidator = {
 
     return packageId;
   },
-  hasDeviceId: async ({ deviceId }: GetPackageDeviceId) => {
+  hasDeviceId: async ({ deviceId }: GetPackageByDeviceId) => {
     const packageId = (await PackageService.getByDeviceId({ deviceId })).id;
 
     if (!packageId) {

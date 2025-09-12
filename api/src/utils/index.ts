@@ -51,3 +51,15 @@ export const omit = <T extends Record<string, unknown>, K extends keyof T>(
   keys: readonly K[]
 ): Omit<T, K> =>
   Object.fromEntries(Object.entries(obj).filter(([k]) => !keys.includes(k as K))) as Omit<T, K>;
+
+export const parseJson = <T>(value: unknown, fallback: T): T => {
+  if (!value) {
+    return fallback;
+  }
+
+  try {
+    return typeof value === "string" ? JSON.parse(value) : (value as T);
+  } catch {
+    return fallback;
+  }
+};

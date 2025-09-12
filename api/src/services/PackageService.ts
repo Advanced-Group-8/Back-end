@@ -1,23 +1,23 @@
 import PackageModel from "@/src/models/PackageModel.js";
 import {
   CreatePackagePayload,
-  GetPackageById,
-  GetPackageDeviceId,
-  GetPackages,
+  GetPackagesWithFilter,
+  GetPackageByIdWithFilter,
+  GetPackageByDeviceIdWithFilter,
 } from "@/src/types/types.js";
 import { executeQuery, getRandomETA, getRandomTrackingCode, omit } from "@/utils";
 import AddressService from "./AddressService";
-import { Package, PackageStatus } from "@/types/responseTypes";
+import { Package } from "@/types/responseTypes";
 import ProfileService from "./ProfileService";
 
 const PackageService = {
-  get: async (payload: GetPackages) => {
+  get: async (payload: GetPackagesWithFilter) => {
     return await PackageModel.get(payload);
   },
-  getById: async (payload: GetPackageById) => {
+  getById: async (payload: GetPackageByIdWithFilter) => {
     return await PackageModel.getById(payload);
   },
-  getByDeviceId: async ({ deviceId }: GetPackageDeviceId) => {
+  getByDeviceId: async ({ deviceId }: GetPackageByDeviceIdWithFilter) => {
     return PackageModel.getByDeviceId({ deviceId });
   },
   create: async ({
