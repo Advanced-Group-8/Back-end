@@ -1,0 +1,29 @@
+FROM node:24-alpine
+
+# Set the working directory inside the container
+WORKDIR /backend/api
+
+# Copy package.json and package-lock.json to install dependencies
+COPY package*.json ./
+
+# Install dependencies using npm ci for a clean, reproducible build
+RUN npm ci
+
+# Copy tsconfig.json for TypeScript configuration and path aliases
+COPY tsconfig.json ./
+
+# Expose port 3000 for the application
+EXPOSE 3000
+
+# Create a non-root user and group for security
+RUN addgroup -g 1001 -S nodejs
+RUN adduser -S nextjs -u 1001
+
+# Change ownership of the working directory to the non-root user
+RUN chown -R nextjs:nodejs /backend/api
+
+# Switch to the non-root user for running the application
+USER nextjs
+
+# Start the development server with tsx watch for hot reloading
+CMD ["npm", "run", "dev"]

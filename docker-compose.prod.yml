@@ -1,0 +1,68 @@
+# Define the Docker Compose version for compatibility
+version: '3.8'
+
+services:
+  # Database service using PostgreSQL
+  db:
+    # Use PostgreSQL 14 Alpine for a lightweight database
+    image: postgres:14-alpine
+    # Load environment variables from .env file in the api directory
+    env_file:
+      - ./.env
+    # Configure PostgreSQL credentials and database name
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: "advanced_backend"
+    # Mount initialization scripts and persistent data volume
+    volumes:
+      - ./db:/docker-entrypoint-initdb.d  # Initialize database with scripts from ./db
+      - db-data:/var/lib/postgresql/data  # Persist database data
+    # Healthcheck to ensure database is ready before API starts
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]  # Check if PostgreSQL is ready
+      interval: 5s                                  # Check every 5 seconds
+      timeout: 5s                                   # Timeout after 5 seconds
+      retries: 5                                    # Retry 5 times before failing
+    # Restrict database access to internal network (no ports exposed)
+    networks:
+      - backend
+
+  # API service for the application
+  api:
+    # Build using Dockerfile.prod in the ./api directory
+    build:
+      context: ./api
+      dockerfile: Dockerfile.prod
+    # Expose port 3000 for the API
+    ports:
+      - "3000:3000"
+    # Load environment variables from .env file in the api directory
+    env_file:
+      - ./.env
+    # Set production environment for optimized behavior
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - NODE_ENV=production
+    # Depend on a healthy database service before starting
+    depends_on:
+      db:
+        condition: service_healthy
+    # Run as non-root user for security
+    user: nextjs:nodejs
+    # Start the production server with compiled JavaScript
+    command: npm start
+    # Restart the service unless explicitly stopped
+    restart: unless-stopped
+    # Connect to the internal network
+    networks:
+      - backend
+
+# Define internal network for secure communication between services
+networks:
+  backend:
+    driver: bridge
+
+# Define persistent volume for database data
+volumes:
+  db-data:

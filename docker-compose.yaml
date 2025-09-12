@@ -1,0 +1,63 @@
+services:
+  # Database service using PostgreSQL
+  db:
+    # Use PostgreSQL 14 Alpine for a lightweight database
+    image: postgres:14-alpine
+    # Load environment variables from .env file in the api directory
+    env_file:
+      - ./.env
+    # Configure PostgreSQL credentials and database name
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: "advanced_backend"
+    # Expose port 5432 for database access (useful for development)
+    ports:
+      - "5432:5432"
+    # Mount initialization scripts and persistent data volume
+    volumes:
+      - ./db:/docker-entrypoint-initdb.d  # Initialize database with scripts from ./db
+      - db-data:/var/lib/postgresql/data  # Persist database data
+    # Healthcheck to ensure database is ready before API starts
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]  # Check if PostgreSQL is ready
+      interval: 5s                                  # Check every 5 seconds
+      timeout: 5s                                   # Timeout after 5 seconds
+      retries: 5                                    # Retry 5 times before failing
+
+  # API service for the Node.js application
+  api:
+    # Build the service using Dockerfile in the ./api directory
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    # Mount source code and tsconfig for hot reloading in development
+    volumes:
+      - ./api/src:/backend/api/src                # Sync source code for hot reloading
+      - ./api/tsconfig.json:/backend/api/tsconfig.json  # Sync TypeScript config for path aliases
+      - /backend/api/node_modules                 # Preserve container's node_modules
+      - ./api/docs:/backend/api/docs
+    # Expose port 3000 for the API
+    ports:
+      - "3000:3000"
+    # Load environment variables from .env file in the api directory
+    env_file:
+      - ./.env
+    # Set environment variables for development and file watching
+    environment:
+      - DATABASE_URL=${DATABASE_URL}              # Database connection string
+      - NODE_ENV=development                      # Enable development mode
+      - WATCHPACK_POLLING=true                    # Enable polling for file watching
+      - CHOKIDAR_USEPOLLING=true                  # Enable polling for chokidar (file watcher)
+    # Depend on a healthy database service before starting
+    depends_on:
+      db:
+        condition: service_healthy
+    # Run the development server with tsx watch for hot reloading
+    command: npm run dev
+    # Restart the service unless explicitly stopped
+    restart: unless-stopped
+
+# Define persistent volume for database data
+volumes:
+  db-data:
