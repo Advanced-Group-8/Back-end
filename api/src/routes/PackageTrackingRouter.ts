@@ -4,10 +4,8 @@ import PackageTrackingValidator from "@/src/validators/PackageTrackingValidator.
 
 const router = express.Router();
 
-// POST: Skapa tracking-data från IoT
 router.post("/", PackageTrackingValidator.create, PackageTrackingController.create);
 
-// GET: Hämta tracking-data för en device
 router.get("/:deviceId", PackageTrackingController.getByDeviceId);
 
 router.get("/", PackageTrackingController.getAllGroupedByDeviceId);

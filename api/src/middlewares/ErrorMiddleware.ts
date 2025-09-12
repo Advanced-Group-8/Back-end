@@ -1,5 +1,7 @@
 import { AppError, NotFoundError } from "@/errors/Error";
+import { buildZodValidationErrors } from "@/utils/validation";
 import { Request, Response, NextFunction } from "express";
+import { ZodError } from "zod";
 
 const ErrorMiddleware = {
   errorHandler: (err: unknown, _req: Request, res: Response, _next: NextFunction) => {
@@ -7,6 +9,12 @@ const ErrorMiddleware = {
       return res.status(err.statusCode).json({
         message: err.message,
         success: false,
+      });
+    } else if (err instanceof ZodError) {
+      return res.status(400).json({
+        message: "Malformed input",
+        success: false,
+        errors: buildZodValidationErrors(err),
       });
     }
 

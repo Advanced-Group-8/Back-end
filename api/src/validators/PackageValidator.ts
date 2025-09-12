@@ -1,6 +1,5 @@
-import { ZodError } from "zod";
 import { NextFunction, Response } from "express";
-import { BadRequestError, NotFoundError } from "@/errors/Error";
+import { NotFoundError } from "@/errors/Error";
 import {
   CreatePackageRequest,
   GetPackageByDeviceIdRequest,
@@ -33,10 +32,6 @@ const PackageValidator = {
 
         next();
       } catch (err: unknown) {
-        if (err instanceof ZodError) {
-          return next(new BadRequestError(JSON.stringify(err.errors)));
-        }
-
         return next(err);
       }
     },
@@ -56,10 +51,6 @@ const PackageValidator = {
 
         next();
       } catch (err: unknown) {
-        if (err instanceof ZodError) {
-          return next(new BadRequestError(JSON.stringify(err.errors)));
-        }
-
         return next(err);
       }
     },
@@ -75,10 +66,6 @@ const PackageValidator = {
 
         next();
       } catch (err: unknown) {
-        if (err instanceof ZodError) {
-          return next(new BadRequestError(JSON.stringify(err.errors)));
-        }
-
         return next(err);
       }
     },
@@ -94,10 +81,6 @@ const PackageValidator = {
 
         next();
       } catch (err: unknown) {
-        if (err instanceof ZodError) {
-          return next(new BadRequestError(JSON.stringify(err.errors)));
-        }
-
         return next(err);
       }
     },

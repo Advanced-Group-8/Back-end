@@ -1,15 +1,15 @@
-import { isApiResponse } from "@/utils";
+import { isOkApiResponse } from "@/utils";
 import { NextFunction, Request, Response } from "express";
 
 const ResponseMiddleware = {
-  respond: (err: unknown, _req: Request, res: Response, next: NextFunction) => {
-    if (isApiResponse(err)) {
-      const { statusCode, message, data } = err;
+  respond: (payload: unknown, _req: Request, res: Response, next: NextFunction) => {
+    if (isOkApiResponse(payload)) {
+      const { statusCode, message, data } = payload;
 
       return res.status(statusCode).json({ statusCode, message, data, success: true });
     }
 
-    return next(err);
+    return next(payload);
   },
 };
 

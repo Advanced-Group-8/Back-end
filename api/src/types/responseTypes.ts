@@ -1,6 +1,7 @@
 export type ApiResponse<T = unknown> = {
   statusCode: number;
   message?: string;
+  errors?: unknown;
   data?: T | T[];
   success?: boolean;
 };

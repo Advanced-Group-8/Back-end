@@ -42,8 +42,13 @@ export const getRandomTrackingCode = (): string => {
   return `${generateBlock()}-${generateBlock()}-${generateBlock()}-${generateBlock()}`;
 };
 
-export const isApiResponse = (obj: unknown): obj is ApiResponse => {
-  return typeof obj === "object" && obj !== null && "statusCode" in obj;
+export const isOkApiResponse = (obj: unknown): obj is ApiResponse => {
+  return (
+    typeof obj === "object" &&
+    obj !== null &&
+    "statusCode" in obj &&
+    String(obj.statusCode).startsWith("2")
+  );
 };
 
 export const omit = <T extends Record<string, unknown>, K extends keyof T>(

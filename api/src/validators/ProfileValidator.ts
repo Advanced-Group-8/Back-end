@@ -1,11 +1,11 @@
 import { NotFoundError } from "@/errors/Error";
 import ProfileService from "@/services/ProfileService";
-import { Profile } from "@/types/types";
+import { ProfileTable } from "@/types/dbTablesTypes";
 
 const ProfileValidator = {
   exists: async (
-    paylod: { id: Profile["id"] } & { role?: string }
-  ): Promise<Profile["id"] | null> => {
+    paylod: { id?: ProfileTable["id"] } & { role?: string }
+  ): Promise<ProfileTable["id"] | null> => {
     const id = paylod.id;
     const role = paylod.role;
 
