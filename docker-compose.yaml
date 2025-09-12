@@ -36,6 +36,7 @@ services:
       - ./api/src:/backend/api/src                # Sync source code for hot reloading
       - ./api/tsconfig.json:/backend/api/tsconfig.json  # Sync TypeScript config for path aliases
       - /backend/api/node_modules                 # Preserve container's node_modules
+      - ./api/docs:/backend/api/docs
     # Expose port 3000 for the API
     ports:
       - "3000:3000"

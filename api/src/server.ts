@@ -5,6 +5,17 @@ import PackageTrackingRouter from "./routes/PackageTrackingRouter.js";
 import "./db/config.js";
 import ErrorMiddleware from "./middlewares/ErrorMiddleware.js";
 import ResponseMiddleware from "./middlewares/ResponseMiddleware.js";
+import swaggerUi from "swagger-ui-express";
+import fs from "fs";
+import yaml from "js-yaml";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const swaggerPath = path.resolve(__dirname, "./docs/swagger.yaml");
+const swaggerSpec = yaml.load(fs.readFileSync(swaggerPath, "utf8"));
 
 dotenv.config();
 
@@ -12,6 +23,12 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
+
+app.get("/", (_req, res) => {
+  res.redirect("/api-docs");
+});
+
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec!));
 
 // Routes
 app.use("/package", PackageRouter);
