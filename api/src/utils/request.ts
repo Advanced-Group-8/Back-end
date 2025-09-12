@@ -1,6 +1,7 @@
-import { GetPackagesWithFilter } from "@/types/types";
+import { GetPackagesWithFilter, PackageFilter } from "@/types/types";
 import { parseJson } from ".";
 import { Request } from "express";
+import { GetPackageByDeviceIdRequest, GetPackageByIdRequest } from "@/types/requestTypes";
 
 export const extractGetPackagesQuery = (req: Request): GetPackagesWithFilter => {
   const query = req.query;
@@ -15,4 +16,15 @@ export const extractGetPackagesQuery = (req: Request): GetPackagesWithFilter => 
     senderAddress: parseJson(query.senderAddress, {}),
     receiverAddress: parseJson(query.receiverAddress, {}),
   } as GetPackagesWithFilter;
+};
+
+export const extractPackageFilter = (
+  req: GetPackageByIdRequest | GetPackageByDeviceIdRequest
+): PackageFilter => {
+  const query = req.query;
+
+  return {
+    limit: query.limit ? Number(query.limit) : undefined,
+    readingsLimit: query.readingsLimit ? Number(query.readingsLimit) : undefined,
+  };
 };

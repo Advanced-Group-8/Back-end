@@ -1,8 +1,12 @@
-import { CreatePackageRequest } from "@/types/requestTypes";
+import {
+  CreatePackageRequest,
+  GetPackageByDeviceIdRequest,
+  GetPackageByIdRequest,
+} from "@/types/requestTypes";
 import PackageService from "../services/PackageService";
 import { NextFunction, Request, Response } from "express";
 import { ApiResponse } from "@/types/responseTypes";
-import { extractGetPackagesQuery } from "@/utils/request";
+import { extractGetPackagesQuery, extractPackageFilter } from "@/utils/request";
 
 const PackageContoller = {
   get: async (req: Request, _res: Response, next: NextFunction) => {
@@ -14,6 +18,36 @@ const PackageContoller = {
       next({
         statusCode: 200,
         data: packages,
+      } as ApiResponse);
+    } catch (error) {
+      next(error);
+    }
+  },
+  getById: async (req: GetPackageByIdRequest, _res: Response, next: NextFunction) => {
+    const { id } = req.params;
+    const filters = extractPackageFilter(req);
+
+    try {
+      const foundPackage = await PackageService.getById({ ...filters, id });
+
+      next({
+        statusCode: 200,
+        data: foundPackage,
+      } as ApiResponse);
+    } catch (error) {
+      next(error);
+    }
+  },
+  getByDeviceId: async (req: GetPackageByDeviceIdRequest, _res: Response, next: NextFunction) => {
+    const { deviceId } = req.params;
+    const filters = extractPackageFilter(req);
+
+    try {
+      const foundPackage = await PackageService.getByDeviceId({ ...filters, deviceId });
+
+      next({
+        statusCode: 200,
+        data: foundPackage,
       } as ApiResponse);
     } catch (error) {
       next(error);
