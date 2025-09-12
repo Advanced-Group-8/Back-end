@@ -1,2 +1,22 @@
-name: Build and Run Backend
+name: Auto PR from Feature Branch
 
+on:
+  push:
+    branches:
+      - 'feature/**'   # Alla brancher som börjar med feature/
+
+jobs:
+  create-pull-request:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create Pull Request to development
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: ${{ github.ref_name }}   # Den branch du pushade
+          base: development                # PR ska alltid gå mot development
+          title: "Auto PR: ${{ github.ref_name }} → development"
+          body: |
+            This PR was automatically created from branch ${{ github.ref_name }} to development.
