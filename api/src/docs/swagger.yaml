@@ -2,205 +2,353 @@ openapi: 3.0.0
 info:
   title: Package Tracking API
   version: 1.0.0
-  description: API for managing package tracking, profiles, and addresses.
-servers:
-  - url: http://localhost:3000/api
-paths:
-  /packages:
-    get:
-      summary: Get Packages
-      parameters:
-        - name: senderId
-          in: query
-          required: true
-          schema:
-            type: string
-        - name: receiverId
-          in: query
-          required: true
-          schema:
-            type: string
-        - name: currentCarrierId
-          in: query
-          required: false
-          schema:
-            type: string
-        - name: status
-          in: query
-          required: false
-          schema:
-            type: string
-        - name: senderAddress
-          in: query
-          required: false
-          schema:
-            type: object
-            additionalProperties:
-              type: string
-        - name: receiverAddress
-          in: query
-          required: false
-          schema:
-            type: object
-            additionalProperties:
-              type: string
-      responses:
-        "200":
-          description: A list of packages
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    id:
-                      type: string
-                    senderId:
-                      type: string
-                    receiverId:
-                      type: string
-                    senderAddressId:
-                      type: string
-                    receiverAddressId:
-                      type: string
-                    currentCarrierId:
-                      type: string
-                    deviceId:
-                      type: string
-                    status:
-                      type: string
-                    trackingCode:
-                      type: string
-                    eta:
-                      type: string
-    post:
-      summary: Create a Package
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                senderId:
-                  type: string
-                receiverId:
-                  type: string
-                senderAddressId:
-                  type: string
-                receiverAddressId:
-                  type: string
-                currentCarrierId:
-                  type: string
-                deviceId:
-                  type: string
-                status:
-                  type: string
-                trackingCode:
-                  type: string
-                eta:
-                  type: string
-      responses:
-        "201":
-          description: Package created successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  id:
-                    type: string
-                  senderId:
-                    type: string
-                  receiverId:
-                    type: string
-                  senderAddressId:
-                    type: string
-                  receiverAddressId:
-                    type: string
-                  currentCarrierId:
-                    type: string
-                  deviceId:
-                    type: string
-                  status:
-                    type: string
-                  trackingCode:
-                    type: string
-                  eta:
-                    type: string
+  description: API for managing package tracking information.
 
-  /packages/{id}:
+paths:
+  /profiles/{id}:
     get:
-      summary: Get Package by ID
+      summary: Retrieve a profile by ID
       parameters:
         - name: id
           in: path
           required: true
+          description: ID of the profile to retrieve
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Profile details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseProfile'
+        '404':
+          description: Profile not found
+
+  /packages:
+    get:
+      summary: Retrieve a list of packages with filters
+      parameters:
+        - name: senderId
+          in: query
+          schema:
+            type: integer
+        - name: receiverId
+          in: query
+          schema:
+            type: integer
+        - name: currentCarrierId
+          in: query
+          schema:
+            type: integer
+        - name: status
+          in: query
           schema:
             type: string
+            enum:
+              - pending
+              - in_transit
+              - delivered
+              - cancelled
+              - out_for_delivery
+        - name: limit
+          in: query
+          schema:
+            type: integer
+        - name: readingsLimit
+          in: query
+          schema:
+            type: integer
       responses:
-        "200":
+        '200':
+          description: A list of packages
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponsePackageArray'
+
+  /packages/{id}:
+    get:
+      summary: Retrieve a package by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the package to retrieve
+          schema:
+            type: integer
+      responses:
+        '200':
           description: Package details
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  id:
-                    type: string
-                  senderId:
-                    type: string
-                  receiverId:
-                    type: string
-                  senderAddressId:
-                    type: string
-                  receiverAddressId:
-                    type: string
-                  currentCarrierId:
-                    type: string
-                  deviceId:
-                    type: string
-                  status:
-                    type: string
-                  trackingCode:
-                    type: string
-                  eta:
-                    type: string
+                $ref: '#/components/schemas/ApiResponsePackage'
+        '404':
+          description: Package not found
+
+  /packages/device/{deviceId}:
+    get:
+      summary: Retrieve a package by device ID
+      parameters:
+        - name: deviceId
+          in: path
+          required: true
+          description: Device ID of the package to retrieve
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Package details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponsePackage'
+        '404':
+          description: Package not found
 
   /addresses:
     post:
-      summary: Create an Address
+      summary: Create a new address
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                street:
-                  type: string
-                city:
-                  type: string
-                postalCode:
-                  type: string
-                country:
-                  type: string
+              $ref: '#/components/schemas/Address'
       responses:
-        "201":
-          description: Address created successfully
+        '201':
+          description: Address created
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  id:
-                    type: string
-                  street:
-                    type: string
-                  city:
-                    type: string
-                  postalCode:
-                    type: string
-                  country:
-                    type: string
+                $ref: '#/components/schemas/ApiResponseAddress'
+
+  /packageTracking:
+    post:
+      summary: Create new package tracking information
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PackageTracking'
+      responses:
+        '201':
+          description: Package tracking created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponsePackageTracking'
+    get:
+      summary: Retrieve all package tracking records grouped by device ID
+      responses:
+        '200':
+          description: Grouped package tracking records
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponsePackageTrackingGroupArray'
+
+components:
+  schemas:
+    ApiResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Success"
+        errors:
+          type: object
+          additionalProperties: true
+        data:
+          type: object
+        success:
+          type: boolean
+          example: true
+
+    ApiResponseProfile:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/Profile'
+
+    ApiResponsePackage:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/Package'
+
+    ApiResponsePackageArray:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/Package'
+
+    ApiResponseAddress:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/Address'
+
+    ApiResponsePackageTracking:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/PackageTracking'
+
+    ApiResponsePackageTrackingGroupArray:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/PackageTrackingGroup'
+
+    Profile:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        email:
+          type: string
+          example: "john.doe@example.com"
+        name:
+          type: string
+          example: "John Doe"
+        role:
+          type: string
+          example: "Sender"
+        companyName:
+          type: string
+          example: "Example Corp"
+        createdAt:
+          type: string
+          format: date-time
+          example: "2023-01-01T12:00:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          example: "2023-01-02T12:00:00Z"
+
+    Address:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        street:
+          type: string
+          example: "123 Main St"
+        city:
+          type: string
+          example: "Anytown"
+        postalCode:
+          type: string
+          example: "12345"
+        country:
+          type: string
+          example: "USA"
+
+    Package:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        sender:
+          $ref: '#/components/schemas/Profile'
+        receiver:
+          $ref: '#/components/schemas/Profile'
+        currentCarrier:
+          $ref: '#/components/schemas/Profile'
+        senderAddress:
+          $ref: '#/components/schemas/Address'
+        receiverAddress:
+          $ref: '#/components/schemas/Address'
+        deviceId:
+          type: string
+          example: "device-1234"
+        status:
+          type: string
+          enum:
+            - pending
+            - in_transit
+            - delivered
+            - cancelled
+            - out_for_delivery
+        trackingCode:
+          type: string
+          example: "TRACK123456"
+        createdAt:
+          type: string
+          format: date-time
+          example: "2023-01-01T12:00:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          example: "2023-01-02T12:00:00Z"
+        eta:
+          type: string
+          format: date-time
+          example: "2023-01-10T12:00:00Z"
+        readings:
+          type: array
+          items:
+            $ref: '#/components/schemas/PackageTracking'
+
+    PackageTracking:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        deviceId:
+          type: string
+          example: "device-1234"
+        lat:
+          type: number
+          format: float
+          example: 40.7128
+        lng:
+          type: number
+          format: float
+          example: -74.0060
+        temperature:
+          type: number
+          format: float
+          example: 22.5
+        humidity:
+          type: number
+          format: float
+          example: 50.0
+        createdAt:
+          type: string
+          format: date-time
+          example: "2023-01-01T12:00:00Z"
+
+    PackageTrackingGroup:
+      type: object
+      properties:
+        deviceId:
+          type: string
+          example: "device-1234"
+        readings:
+          type: array
+          items:
+            $ref: '#/components/schemas/PackageTracking'
