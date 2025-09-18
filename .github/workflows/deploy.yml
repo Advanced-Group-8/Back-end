@@ -51,7 +51,7 @@ jobs:
         with:
           app-name: t8-server
           images: t8containerregistry.azurecr.io/my-api:latest
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          # publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
 
   notify-discord:
     needs: docker-build-and-deploy
