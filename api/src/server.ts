@@ -1,10 +1,10 @@
 import express from "express";
 import dotenv from "dotenv";
-import PackageRouter from "./routes/PackageRouter.js";
-import PackageTrackingRouter from "./routes/PackageTrackingRouter.js";
-import "./db/config.js";
-import ErrorMiddleware from "./middlewares/ErrorMiddleware.js";
-import ResponseMiddleware from "./middlewares/ResponseMiddleware.js";
+import PackageRouter from "./routes/PackageRouter";
+import PackageTrackingRouter from "./routes/PackageTrackingRouter";
+import "./db/config";
+import ErrorMiddleware from "./middlewares/ErrorMiddleware";
+import ResponseMiddleware from "./middlewares/ResponseMiddleware";
 import swaggerUi from "swagger-ui-express";
 import fs from "fs";
 import yaml from "js-yaml";
@@ -20,7 +20,8 @@ const swaggerSpec = yaml.load(fs.readFileSync(swaggerPath, "utf8"));
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = Number(process.env.PORT || "3000");
+const HOST = "0.0.0.0";
 
 app.use(express.json());
 
@@ -44,6 +45,6 @@ app.use(ErrorMiddleware.notFoundHandler);
 //Generic error handler
 app.use(ErrorMiddleware.errorHandler);
 
-app.listen(PORT, () => {
+app.listen(PORT, HOST, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
