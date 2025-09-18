@@ -1,4 +1,5 @@
-FROM node:24-alpine
+# Stage 1: Development
+FROM node:24-alpine AS dev
 
 # Set the working directory inside the container
 WORKDIR /backend/api
@@ -27,3 +28,26 @@ USER nextjs
 
 # Start the development server with tsx watch for hot reloading
 CMD ["npm", "run", "dev"]
+
+# Stage 2: Production
+FROM node:24-alpine AS prod
+
+WORKDIR /backend/api
+
+# Copy package files and install only production dependencies
+COPY package*.json ./
+RUN npm ci --production
+
+# Copy only the built output from dev stage (assumes you run build in dev stage separately)
+COPY --from=dev /backend/api/dist ./dist
+
+# Create non-root user for security
+RUN addgroup -g 1001 -S nodejs
+RUN adduser -S nextjs -u 1001
+RUN chown -R nextjs:nodejs /backend/api
+USER nextjs
+
+EXPOSE 3000
+
+# Start production server
+CMD ["node", "dist/server.js"]

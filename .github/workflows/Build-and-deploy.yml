@@ -1,16 +1,14 @@
 name: Build, Test, and Deploy Backend
 
 on:
-  workflow_dispatch: # Manual trigger from GitHub Actions UI
+  workflow_dispatch: # Manual trigger
   pull_request:
     branches:
-      - dev # Trigger workflow for PRs targeting dev
-      - main # Trigger workflow for PRs targeting main
+      - dev # PRs to dev
+      - main # PRs to main
 
 jobs:
-  # ===============================
   # Node.js test & build job
-  # ===============================
   node-build:
     runs-on: ubuntu-latest
     outputs:
@@ -20,117 +18,109 @@ jobs:
       # Checkout the repository
       - name: Checkout code
         uses: actions/checkout@v4
-        # Pulls the repository code into the runner
 
       # Cache Node.js dependencies
       - name: Cache Node.js modules
         uses: actions/cache@v3
         with:
           path: |
-            **/node_modules    # Cache local node_modules folders
-            ~/.npm              # Cache global npm cache
+            **/node_modules
+            ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
-        # Speeds up installs by restoring cached dependencies
 
       # Setup Node.js environment
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 20 # Use Node.js v20
-          cache: "npm" # Enable built-in npm caching
+          node-version: 20
+          cache: "npm"
 
       # Install project dependencies
       - name: Install dependencies
         run: npm ci
-        # Install Node.js dependencies using clean install (respects package-lock.json)
 
       # Run tests
       - name: Run tests
         id: test
         run: npm run test
-        # Execute all tests, results will determine downstream deploy/build
 
       # Build the project
       - name: Build project
         run: npm run build
-        # Compile/prepare the project for deployment (e.g., TypeScript compilation)
 
-  # ===============================
-  # Docker build & push to Azure Container Registry (ACR)
-  # ===============================
+  # Docker build & push to ACR
   docker-build:
-    needs: node-build # Run after Node.js build/test passes
+    needs: node-build
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout the repository
+      # Checkout code
       - name: Checkout code
         uses: actions/checkout@v4
-        # Needed to build Docker image
 
-      # Build Docker image for the API
-      - name: Build API Docker image
-        run: docker build -t my-api:latest ./api
-        # Builds Docker image from ./api folder and tags it as my-api:latest
+      # Determine Docker target based on branch
+      - name: Set Docker build target
+        id: docker-target
+        run: |
+          if [[ "${GITHUB_REF_NAME}" == "dev" ]]; then
+            echo "target=dev" >> $GITHUB_OUTPUT
+          else
+            echo "target=prod" >> $GITHUB_OUTPUT
+          fi
 
-      # Log in to Azure Container Registry
-      - name: Log in to Azure Container Registry
+      # Build Docker image
+      - name: Build Docker image
+        run: docker build --target ${{ steps.docker-target.outputs.target }} -t my-api:latest ./api
+
+      # Push only for prod builds
+      - name: Push to Azure Container Registry
+        if: github.ref_name == 'main'
         uses: azure/docker-login@v1
         with:
-          login-server: ${{ secrets.ACR_LOGIN_SERVER }} # e.g., myregistry.azurecr.io
+          login-server: ${{ secrets.ACR_LOGIN_SERVER }}
           username: ${{ secrets.ACR_USERNAME }}
           password: ${{ secrets.ACR_PASSWORD }}
-        # Authenticates Docker to push images to ACR
 
-      # Tag Docker image with ACR registry path
       - name: Tag image for ACR
+        if: github.ref_name == 'main'
         run: docker tag my-api:latest ${{ secrets.ACR_LOGIN_SERVER }}/my-api:latest
-        # Prepares the image name to match ACR repository naming convention
 
-      # Push Docker image to ACR
       - name: Push image to ACR
+        if: github.ref_name == 'main'
         run: docker push ${{ secrets.ACR_LOGIN_SERVER }}/my-api:latest
-        # Uploads Docker image to Azure Container Registry
 
-  # ===============================
   # Deploy API to Azure Web App
-  # ===============================
   deploy-api:
-    needs: node-build # Only deploy if Node.js build/tests pass
+    needs: node-build
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' # Deploy only from main branch
+    if: github.ref == 'refs/heads/main'
 
     steps:
       # Checkout the repository
       - name: Checkout code
         uses: actions/checkout@v4
-        # Pulls repository code to deploy
 
-      # Setup Node.js environment for build
+      # Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 20
-        # Ensures Node.js is available for build commands
 
       # Install API dependencies
       - name: Install dependencies
         run: npm ci --prefix ./api
-        # Installs only API dependencies
 
       # Build API project
       - name: Build project
         run: npm run build --prefix ./api
-        # Compile/prepare API code for deployment
 
       # Deploy to Azure Web App
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
-          app-name: ${{ secrets.AZURE_WEBAPP_NAME }} # Azure Web App name
-          slot-name: production # Deploy to production slot
+          app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
+          slot-name: production
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: ./api # Folder containing build artifacts
-        # Pushes compiled API code to Azure Web App
+          package: ./api
