@@ -19,14 +19,13 @@ jobs:
           args: |
             📢 **PULL REQUEST NOTIFICATION**
 
-            ╭──────────────────────────────────────────────╮
-            │  **${{ github.event.pull_request.title }}**  │
-            ╰──────────────────────────────────────────────╯
+                **${{ github.event.pull_request.title }}**
 
-            🔢 **PR Number:** #${{ github.event.pull_request.number }}
-            👨‍💻 **Author:** @${{ github.actor }}
-            📤 **Source:** `${{ github.head_ref }}`
-            📥 **Target:** `${{ github.base_ref }}`
-            🏢 **Repository:** ${{ github.repository }}
 
-            🔗 **[View Pull Request](${{ github.event.pull_request.html_url }})**
+            🔢  **PR Number:** #${{ github.event.pull_request.number }}
+            👨‍💻  **Author:** @${{ github.actor }}
+            📤  **Source:** `${{ github.head_ref }}`
+            📥  **Target:** `${{ github.base_ref }}`
+            🏢  **Repository:** ${{ github.repository }}
+
+            🔗  **[View Pull Request](${{ github.event.pull_request.html_url }})**
