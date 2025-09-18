@@ -45,14 +45,13 @@ jobs:
         run: docker push ${{ secrets.ACR_LOGIN_SERVER }}/my-api:latest
 
       # Deploy to Azure Web App
-      - name: Deploy to Azure Web App
+      # Deploy Docker image to Azure Web App
+      - name: Deploy Docker image to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
-          # app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
           app-name: t8-server
-          slot-name: ""
+          images: t8containerregistry.azurecr.io/my-api:latest
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: ./api
 
   notify-discord:
     needs: docker-build-and-deploy
