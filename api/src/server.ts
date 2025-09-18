@@ -6,17 +6,8 @@ import "./db/config.js";
 import ErrorMiddleware from "./middlewares/ErrorMiddleware.js";
 import ResponseMiddleware from "./middlewares/ResponseMiddleware.js";
 import swaggerUi from "swagger-ui-express";
-import fs from "fs";
-import yaml from "js-yaml";
-import path from "path";
-import { fileURLToPath } from "url";
 import { executeQuery } from "./utils/index.js";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-const swaggerPath = path.resolve(__dirname, "./docs/swagger.yaml");
-const swaggerSpec = yaml.load(fs.readFileSync(swaggerPath, "utf8"));
+import { swaggerSpec } from "./docs/swagger.js";
 
 dotenv.config();
 
@@ -28,12 +19,12 @@ app.use(express.json());
 
 // Health check endpoint (VIKTIGT för Azure!)
 app.get("/health", (_req, res) => {
-  res.status(200).json({ 
-    status: "OK", 
+  res.status(200).json({
+    status: "OK",
     timestamp: new Date().toISOString(),
     uptime: process.uptime(),
     port: PORT,
-    host: HOST
+    host: HOST,
   });
 });
 
@@ -59,32 +50,31 @@ async function startServer() {
     console.log("🔍 Testing database connection...");
     const dbTest = await executeQuery("SELECT NOW() as current_time;");
     console.log("✅ Database connected:", dbTest);
-    
+
     // Start server - BARA EN GÅNG!
     const server = app.listen(PORT, HOST, () => {
       console.log(`🚀 Server running on http://${HOST}:${PORT}`);
       console.log(`📚 API Documentation: http://${HOST}:${PORT}/api-docs`);
       console.log(`❤️ Health check: http://${HOST}:${PORT}/health`);
-      console.log(`🐳 Environment: ${process.env.NODE_ENV || 'development'}`);
+      console.log(`🐳 Environment: ${process.env.NODE_ENV || "development"}`);
     });
 
     // Graceful shutdown
-    process.on('SIGTERM', () => {
-      console.log('🛑 SIGTERM received, shutting down gracefully');
+    process.on("SIGTERM", () => {
+      console.log("🛑 SIGTERM received, shutting down gracefully");
       server.close(() => {
-        console.log('✅ Process terminated gracefully');
+        console.log("✅ Process terminated gracefully");
         process.exit(0);
       });
     });
 
-    process.on('SIGINT', () => {
-      console.log('🛑 SIGINT received, shutting down gracefully');
+    process.on("SIGINT", () => {
+      console.log("🛑 SIGINT received, shutting down gracefully");
       server.close(() => {
-        console.log('✅ Process terminated gracefully');
+        console.log("✅ Process terminated gracefully");
         process.exit(0);
       });
     });
-
   } catch (error) {
     console.error("❌ Failed to start server:", error);
     process.exit(1);
