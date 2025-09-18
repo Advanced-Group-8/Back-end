@@ -21,7 +21,6 @@ jobs:
 
                 **${{ github.event.pull_request.title }}**
 
-
             🔢  **PR Number:** #${{ github.event.pull_request.number }}
             👨‍💻  **Author:** @${{ github.actor }}
             📤  **Source:** `${{ github.head_ref }}`
