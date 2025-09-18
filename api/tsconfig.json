@@ -15,6 +15,6 @@
     "skipLibCheck": true,
     "sourceMap": true
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "fix-imports.cjs"],
   "exclude": ["node_modules", "dist"]
 }
