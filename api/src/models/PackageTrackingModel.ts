@@ -4,7 +4,7 @@ import {
   CreatePackageTracking,
   GetPackageTrackingByDeviceId,
   PackageTrackingGroup,
-} from "@/types/types";
+} from "@/types/types.js";
 
 const PackageTrackingModel = {
   create: async ({ deviceId, lat, lng, temperature, humidity }: CreatePackageTracking) => {

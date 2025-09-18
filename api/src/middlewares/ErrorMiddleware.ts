@@ -1,5 +1,5 @@
-import { AppError, NotFoundError } from "@/errors/Error";
-import { buildZodValidationErrors } from "@/utils/validation";
+import { AppError, NotFoundError } from "@/errors/Error.js";
+import { buildZodValidationErrors } from "@/utils/validation.js";
 import { Request, Response, NextFunction } from "express";
 import { ZodError } from "zod";
 

@@ -1,6 +1,6 @@
-import { NotFoundError } from "@/errors/Error";
-import ProfileService from "@/services/ProfileService";
-import { ProfileTable } from "@/types/dbTablesTypes";
+import { NotFoundError } from "@/errors/Error.js";
+import ProfileService from "@/services/ProfileService.js";
+import { ProfileTable } from "@/types/dbTablesTypes.js";
 
 const ProfileValidator = {
   exists: async (

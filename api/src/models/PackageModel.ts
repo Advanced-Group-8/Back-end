@@ -4,9 +4,9 @@ import {
   GetPackageByIdWithFilter,
   GetPackageByDeviceIdWithFilter,
 } from "@/src/types/types.js";
-import { PackageTable } from "@/types/dbTablesTypes";
-import { Package } from "@/types/responseTypes";
-import { executeQuery } from "@/utils";
+import { PackageTable } from "@/types/dbTablesTypes.js";
+import { Package } from "@/types/responseTypes.js";
+import { executeQuery } from "@/utils/index.js";
 
 const PackageModel = {
   get: async ({

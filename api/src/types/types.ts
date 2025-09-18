@@ -1,4 +1,4 @@
-import { AddressTable, PackageTable, PackageTrackingTable, ProfileTable } from "./dbTablesTypes";
+import { AddressTable, PackageTable, PackageTrackingTable, ProfileTable } from "./dbTablesTypes.js";
 
 export type GetProfileById = { id: NonNullable<ProfileTable["id"]> };
 

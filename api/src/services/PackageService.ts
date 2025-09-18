@@ -5,11 +5,10 @@ import {
   GetPackageByIdWithFilter,
   GetPackageByDeviceIdWithFilter,
 } from "@/src/types/types.js";
-import { executeQuery, getRandomETA, getRandomTrackingCode, omit } from "@/utils";
-import AddressService from "./AddressService";
-import { Package } from "@/types/responseTypes";
-import ProfileService from "./ProfileService";
-import { pool } from "@/db/config";
+import { getRandomETA, getRandomTrackingCode, omit } from "@/utils/index.js";
+import AddressService from "./AddressService.js";
+import { Address, Package } from "@/types/responseTypes.js";
+import ProfileService from "./ProfileService.js";
 
 const PackageService = {
   get: async (payload: GetPackagesWithFilter) => {
@@ -53,7 +52,6 @@ const PackageService = {
       eta: getRandomETA(),
     });
 
-    // 4. Return full package object
     return {
       ...omit(createdPackage, [
         "senderId",
@@ -65,8 +63,8 @@ const PackageService = {
       sender,
       receiver,
       currentCarrier,
-      senderAddress: { id: senderAddressId, ...senderAddress },
-      receiverAddress: { id: receiverAddressId, ...receiverAddress },
+      senderAddress: { id: senderAddressId, ...senderAddress } as Address,
+      receiverAddress: { id: receiverAddressId, ...receiverAddress } as Address,
       readings: [],
     } as Package;
   },

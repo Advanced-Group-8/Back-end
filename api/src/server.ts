@@ -1,16 +1,16 @@
 import express from "express";
 import dotenv from "dotenv";
-import PackageRouter from "./routes/PackageRouter";
-import PackageTrackingRouter from "./routes/PackageTrackingRouter";
+import PackageRouter from "./routes/PackageRouter.js";
+import PackageTrackingRouter from "./routes/PackageTrackingRouter.js";
 import "./db/config.js";
-import ErrorMiddleware from "./middlewares/ErrorMiddleware";
-import ResponseMiddleware from "./middlewares/ResponseMiddleware";
+import ErrorMiddleware from "./middlewares/ErrorMiddleware.js";
+import ResponseMiddleware from "./middlewares/ResponseMiddleware.js";
 import swaggerUi from "swagger-ui-express";
 import fs from "fs";
 import yaml from "js-yaml";
 import path from "path";
 import { fileURLToPath } from "url";
-import { executeQuery } from "./utils";
+import { executeQuery } from "./utils/index.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

@@ -1,10 +1,10 @@
-import { GetPackagesWithFilter, PackageFilter } from "@/types/types";
-import { parseJson } from ".";
+import { GetPackagesWithFilter, PackageFilter } from "@/types/types.js";
 import {
   GetPackageByDeviceIdRequest,
   GetPackageByIdRequest,
   GetPackagesRequest,
-} from "@/types/requestTypes";
+} from "@/types/requestTypes.js";
+import { parseJson } from "./index.js";
 
 export const extractGetPackagesQuery = (req: GetPackagesRequest): GetPackagesWithFilter => {
   const query = req.query;

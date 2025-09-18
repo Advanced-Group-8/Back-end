@@ -1,9 +1,9 @@
-import PackageTrackingService from "@/src/services/PackageTrackingService";
+import PackageTrackingService from "@/src/services/PackageTrackingService.js";
 import {
   CreatePackageTrackingRequest,
   GetPackageTrackingByDeviceIdRequest,
-} from "@/types/requestTypes";
-import { ApiResponse } from "@/types/responseTypes";
+} from "@/types/requestTypes.js";
+import { ApiResponse } from "@/types/responseTypes.js";
 import { Request, Response, NextFunction } from "express";
 
 const PackageTrackingController = {

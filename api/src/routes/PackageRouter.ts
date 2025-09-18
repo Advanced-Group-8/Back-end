@@ -1,5 +1,5 @@
-import PackageContoller from "../controllers/PackageController";
-import PackageValidator from "../validators/PackageValidator";
+import PackageContoller from "../controllers/PackageController.js";
+import PackageValidator from "../validators/PackageValidator.js";
 import express from "express";
 
 const router = express.Router();

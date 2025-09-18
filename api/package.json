@@ -7,7 +7,7 @@
     "scripts": {
         "start": "node dist/server.js",
         "dev": "tsx watch src/server.ts",
-        "build": "tsc && node fix-imports.cjs",
+        "build": "tsc",
         "test": "echo \"ok\" && exit 0"
     },
     "repository": {

@@ -1,6 +1,6 @@
 import { GetProfileById } from "@/src/types/types.js";
-import { ProfileTable } from "@/types/dbTablesTypes";
-import { executeQuery } from "@/utils";
+import { ProfileTable } from "@/types/dbTablesTypes.js";
+import { executeQuery } from "@/utils/index.js";
 
 const ProfileModel = {
   getById: async ({ id }: GetProfileById): Promise<ProfileTable> => {

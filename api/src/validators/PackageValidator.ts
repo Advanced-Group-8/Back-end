@@ -1,20 +1,20 @@
 import { NextFunction, Response } from "express";
-import { NotFoundError } from "@/errors/Error";
+import { NotFoundError } from "@/errors/Error.js";
 import {
   CreatePackageRequest,
   GetPackageByDeviceIdRequest,
   GetPackageByIdRequest,
   GetPackagesRequest,
-} from "@/types/requestTypes";
-import ProfileValidator from "./ProfileValidator";
-import { GetPackageById, GetPackageByDeviceId } from "@/types/types";
-import PackageService from "@/services/PackageService";
+} from "@/types/requestTypes.js";
+import ProfileValidator from "./ProfileValidator.js";
+import { GetPackageById, GetPackageByDeviceId } from "@/types/types.js";
+import PackageService from "@/services/PackageService.js";
 import {
   createPackageBodySchema,
   getPackageByDeviceIdParamsSchema,
   getPackageByIdParamsSchema,
   getPackagesQuerySchema,
-} from "@/schemas/validation/packageValidationSchemas";
+} from "@/schemas/validation/packageValidationSchemas.js";
 
 const PackageValidator = {
   create: {
