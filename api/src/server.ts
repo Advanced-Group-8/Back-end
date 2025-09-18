@@ -48,6 +48,12 @@ app.use(ErrorMiddleware.errorHandler);
 
 console.log(await executeQuery("SELECT NOW();"));
 
+let server;
+
+if (require.main === module) {
+  server = app.listen(PORT, HOST, () => {});
+}
+
 app.listen(PORT, HOST, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
