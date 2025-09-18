@@ -49,6 +49,24 @@ jobs:
         uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
-          slot-name: production
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
           package: ./api
+
+  notify-discord:
+    needs: docker-build-and-deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Send Discord deploy message
+        uses: Ilshidur/action-discord@master
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        with:
+          args: |
+            🎉 **Deployment Notification**
+
+            ✅ Code has been successfully deployed to **main**!
+
+            👨‍💻 Deployed by: @${{ github.actor }}
+            🏢 Repository: ${{ github.repository }}
+            🔗 Commit: [${{ github.sha }}](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }})
