@@ -17,6 +17,16 @@ jobs:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
         with:
           args: |
-            -X POST
-            -H "Content-Type: application/json"
-            -d "{\"content\": \"📢 **Ny pull request skapad!**\nPR #${{ github.event.pull_request.number }} - **${{ github.event.pull_request.title }}**\nSkapad av: **${{ github.actor }}**\nKälla-branch: **${{ github.head_ref }}**\nMål-branch: **${{ github.base_ref }}**\nSe PR: <${{ github.event.pull_request.html_url }}>\"}"
+            📢 **PULL REQUEST NOTIFICATION**
+
+            ╭──────────────────────────────────────────────╮
+            │  **${{ github.event.pull_request.title }}**  │
+            ╰──────────────────────────────────────────────╯
+
+            🔢 **PR Number:** #${{ github.event.pull_request.number }}
+            👨‍💻 **Author:** @${{ github.actor }}
+            📤 **Source:** `${{ github.head_ref }}`
+            📥 **Target:** `${{ github.base_ref }}`
+            🏢 **Repository:** ${{ github.repository }}
+
+            🔗 **[View Pull Request](${{ github.event.pull_request.html_url }})**
