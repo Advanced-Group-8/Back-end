@@ -10,6 +10,7 @@ import fs from "fs";
 import yaml from "js-yaml";
 import path from "path";
 import { fileURLToPath } from "url";
+import { executeQuery } from "./utils";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -44,6 +45,8 @@ app.use(ErrorMiddleware.notFoundHandler);
 
 //Generic error handler
 app.use(ErrorMiddleware.errorHandler);
+
+console.log(await executeQuery("SELECT NOW();"));
 
 app.listen(PORT, HOST, () => {
   console.log(`Server running on http://localhost:${PORT}`);
