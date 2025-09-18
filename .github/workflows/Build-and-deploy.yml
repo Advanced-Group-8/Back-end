@@ -36,6 +36,7 @@ jobs:
         with:
           node-version: 20
           cache: "npm"
+          cache-dependency-path: ./api/package-lock.json
 
       # Install project dependencies (inside ./api)
       - name: Install dependencies
