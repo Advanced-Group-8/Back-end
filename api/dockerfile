@@ -32,14 +32,23 @@ CMD ["npm", "run", "dev"]
 # Stage 2: Production
 FROM node:24-alpine AS prod
 
+# Set working directory
 WORKDIR /backend/api
 
-# Copy package files and install only production dependencies
+# Copy package files and install all dependencies (including dev for build)
 COPY package*.json ./
-RUN npm ci --production
 
-# Copy only the built output from dev stage (assumes you run build in dev stage separately)
-COPY --from=dev /backend/api/dist ./dist
+# Install all dependencies for build
+RUN npm ci
+
+# Copy all source files
+COPY . .
+
+# Build the project (TypeScript / dist)
+RUN npm run build
+
+# Remove dev dependencies to reduce image size
+RUN npm prune --production
 
 # Create non-root user for security
 RUN addgroup -g 1001 -S nodejs
@@ -47,7 +56,8 @@ RUN adduser -S nextjs -u 1001
 RUN chown -R nextjs:nodejs /backend/api
 USER nextjs
 
+# Expose application port
 EXPOSE 3000
 
-# Start production server
+# Start the production server
 CMD ["node", "dist/server.js"]
