@@ -1,0 +1,67 @@
+{
+    "name": "logi",
+    "version": "1.0.0",
+    "description": "Detta projekt är en **backend-server** som knyter samman hela logistikflödet – från avsändare, via transportör/logistikbärare, till mottagare.  \r Systemet erbjuder **molnbaserad hantering** av paket, fordonsdata och analysmöjligheter för effektiv spårning och övervakning.",
+    "main": "./dist/server.js",
+    "type": "module",
+    "scripts": {
+        "start": "node dist/server.js",
+        "dev": "tsx watch src/server.ts",
+        "build": "tsc",
+        "test": "echo \"ok\" && exit 0"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Advanced-Group-8/Back-end.git"
+    },
+    "dependencies": {
+        "axios": "^1.9.0",
+        "bcryptjs": "^3.0.2",
+        "ci": "^2.3.0",
+        "cookie-parser": "^1.4.7",
+        "cors": "^2.8.5",
+        "date-fns": "^4.1.0",
+        "dotenv": "^16.4.7",
+        "env": "^0.0.2",
+        "express": "^5.1.0",
+        "helmet": "^8.1.0",
+        "js-yaml": "^4.1.0",
+        "jsonwebtoken": "^9.0.2",
+        "nodemailer": "^6.10.1",
+        "pg": "^8.14.1",
+        "postgres": "^3.4.5",
+        "swagger-jsdoc": "^6.2.8",
+        "swagger-ui-express": "^5.0.1",
+        "zod": "^3.24.2"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/Advanced-Group-8/Back-end/issues"
+    },
+    "homepage": "https://github.com/Advanced-Group-8/Back-end#readme",
+    "devDependencies": {
+        "@eslint/js": "^9.34.0",
+        "@types/express": "^5.0.3",
+        "@types/js-yaml": "^4.0.9",
+        "@types/node": "^24.3.0",
+        "@types/pg": "^8.15.5",
+        "@types/swagger-ui-express": "^4.1.8",
+        "@typescript-eslint/eslint-plugin": "^8.41.0",
+        "@typescript-eslint/parser": "^8.41.0",
+        "eslint": "^9.34.0",
+        "eslint-config-prettier": "^10.1.8",
+        "globals": "^16.3.0",
+        "jiti": "^2.5.1",
+        "nodemon": "^3.1.10",
+        "prettier": "^3.6.2",
+        "ts-node": "^10.9.2",
+        "ts-node-dev": "^2.0.0",
+        "tsc-alias": "^1.8.16",
+        "tsconfig-paths": "^4.2.0",
+        "tsx": "^4.20.5",
+        "typescript": "^5.9.2",
+        "typescript-eslint": "^8.41.0"
+    }
+}

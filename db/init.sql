@@ -1,0 +1,46 @@
+CREATE TABLE IF NOT EXISTS profile (
+    id BIGSERIAL PRIMARY KEY,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    name VARCHAR(255) NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    role VARCHAR(50) NOT NULL,
+    company_name VARCHAR(100) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE IF NOT EXISTS address (
+    id BIGSERIAL PRIMARY KEY,
+    street VARCHAR(255) NOT NULL,
+    city VARCHAR(100) NOT NULL,
+    postal_code VARCHAR(20) NOT NULL,
+    country VARCHAR(100) NOT NULL
+);
+CREATE TABLE IF NOT EXISTS package (
+    id BIGSERIAL PRIMARY KEY,
+    sender_id BIGINT NOT NULL REFERENCES profile(id),
+    receiver_id BIGINT NOT NULL REFERENCES profile(id),
+    sender_address_id BIGINT NOT NULL REFERENCES address(id),
+    receiver_address_id BIGINT NOT NULL REFERENCES address(id),
+    current_carrier_id BIGINT NOT NULL REFERENCES profile(id),
+    device_id VARCHAR(100) NOT NULL,
+    status VARCHAR(50) NOT NULL,
+    tracking_code VARCHAR(100) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    eta TIMESTAMP
+);
+CREATE TABLE IF NOT EXISTS contactInfo (
+    id BIGSERIAL PRIMARY KEY,
+    profile_id BIGINT NOT NULL REFERENCES profile(id),
+    address_id BIGINT NOT NULL REFERENCES address(id),
+    phone VARCHAR(20)
+);
+CREATE TABLE IF NOT EXISTS package_tracking (
+    id BIGSERIAL PRIMARY KEY,
+    device_id VARCHAR(100) NOT NULL,
+    lat DECIMAL(9, 6) NOT NULL,
+    lng DECIMAL(9, 6) NOT NULL,
+    temperature DOUBLE PRECISION NOT NULL,
+    humidity DOUBLE PRECISION NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

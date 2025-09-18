@@ -1,0 +1,30 @@
+name: Discord PR Notification
+
+on:
+  pull_request:
+    branches:
+      - development
+      - main
+
+jobs:
+  notify-discord:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Send Discord PR message
+        uses: Ilshidur/action-discord@master
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        with:
+          args: |
+            📢 **PULL REQUEST NOTIFICATION**
+
+                **${{ github.event.pull_request.title }}**
+
+            🔢  **PR Number:** #${{ github.event.pull_request.number }}
+            👨‍💻  **Author:** @${{ github.actor }}
+            📤  **Source:** `${{ github.head_ref }}`
+            📥  **Target:** `${{ github.base_ref }}`
+            🏢  **Repository:** ${{ github.repository }}
+
+            🔗  **[View Pull Request](${{ github.event.pull_request.html_url }})**
