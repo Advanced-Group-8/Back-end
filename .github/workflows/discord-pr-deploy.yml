@@ -1,0 +1,25 @@
+name: Discord Deploy Notification
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  notify-discord:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Send Discord deploy message
+        uses: Ilshidur/action-discord@master
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        with:
+          args: |
+            🎉 **Deployment Notification**
+
+            ✅ Code has been successfully deployed to **main**!
+
+            👨‍💻 Deployed by: @${{ github.actor }}
+            🏢 Repository: ${{ github.repository }}
+            🔗 Commit: [${{ github.sha }}](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }})
