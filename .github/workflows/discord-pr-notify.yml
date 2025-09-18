@@ -12,7 +12,7 @@ jobs:
 
     steps:
       - name: Send Discord PR message
-        uses: Ilshidur/action-discord@v2
+        uses: Ilshidur/action-discord@v1
         with:
           webhook: ${{ secrets.DISCORD_WEBHOOK_URL }}
           message: |
