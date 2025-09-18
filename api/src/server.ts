@@ -2,7 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import PackageRouter from "./routes/PackageRouter";
 import PackageTrackingRouter from "./routes/PackageTrackingRouter";
-import "./db/config";
+import "./db/config.js";
 import ErrorMiddleware from "./middlewares/ErrorMiddleware";
 import ResponseMiddleware from "./middlewares/ResponseMiddleware";
 import swaggerUi from "swagger-ui-express";
