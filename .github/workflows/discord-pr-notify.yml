@@ -1,0 +1,27 @@
+name: Discord PR Notification (Swedish)
+
+on:
+  pull_request:
+    branches:
+      - dev
+      - main
+
+jobs:
+  notify-discord:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Send Discord notification
+      - name: Skicka PR-meddelande till Discord
+        uses: wei/curl@v1
+        with:
+          args: -X POST \
+                -H "Content-Type: application/json" \
+                -d "{
+                  \"content\": \"📢 **Ny pull request skapad!**\\n\
+PR #${{ github.event.pull_request.number }} - **${{ github.event.pull_request.title }}**\\n\
+Skapad av: **${{ github.actor }}**\\n\
+Källa-branch: **${{ github.head_ref }}**\\n\
+Mål-branch: **${{ github.base_ref }}**\\n\
+Se PR: <${{ github.event.pull_request.html_url }}>\"}" \
+                ${{ secrets.DISCORD_WEBHOOK_URL }}
