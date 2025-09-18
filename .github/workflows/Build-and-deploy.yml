@@ -4,7 +4,7 @@ on:
   workflow_dispatch: # Manual trigger
   pull_request:
     branches:
-      - dev # PRs to dev
+      - development # PRs to development
       - main # PRs to main
 
 jobs:
