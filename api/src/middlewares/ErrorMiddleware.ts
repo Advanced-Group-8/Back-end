@@ -2,9 +2,11 @@ import { AppError, NotFoundError } from "@/errors/Error.js";
 import { buildZodValidationErrors } from "@/utils/validation.js";
 import { Request, Response, NextFunction } from "express";
 import { ZodError } from "zod";
+import { logger } from "@/utils/logger.js";
 
 const ErrorMiddleware = {
   errorHandler: (err: unknown, _req: Request, res: Response, _next: NextFunction) => {
+    logger.info("Systemfel/undantag", err);
     if (err instanceof AppError) {
       return res.status(err.statusCode).json({
         message: err.message,
