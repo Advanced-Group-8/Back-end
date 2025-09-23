@@ -1,0 +1,20 @@
+name: Seed DB
+
+on:
+  workflow_dispatch:
+
+jobs:
+  seed:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Run mockData.sql against Azure DB
+        env:
+          PGHOST: ${{ secrets.PGHOST }}
+          PGDATABASE: ${{ secrets.PGDATABASE }}
+          PGUSER: ${{ secrets.PGUSER }}
+          PGPASSWORD: ${{ secrets.PGPASSWORD }}
+        run: |
+          psql "host=$PGHOST dbname=$PGDATABASE user=$PGUSER password=$PGPASSWORD" -f db/mockData.sql
