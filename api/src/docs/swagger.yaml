@@ -25,23 +25,56 @@ paths:
         - in: query
           name: senderId
           required: true
-          schema: { type: integer }
-          description: Sender profile ID
+          schema:
+            type: integer
+          description: Sender profile ID (required)
         - in: query
           name: receiverId
           required: true
-          schema: { type: integer }
-          description: Receiver profile ID
+          schema:
+            type: integer
+          description: Receiver profile ID (required)
+        - in: query
+          name: currentCarrierId
+          required: false
+          schema:
+            type: integer
+          description: Current carrier profile ID (optional)
+        - in: query
+          name: status
+          required: false
+          schema:
+            $ref: "#/components/schemas/PackageStatus"
+          description: Filter packages by status (optional). See PackageStatus enum.
+        - in: query
+          name: senderAddress
+          required: false
+          schema:
+            type: string
+          description: >-
+            JSON-stringified address object matching AddressInput schema (no `id`). Your code parses this
+            via `parseJson(query.senderAddress, {})`. Example: {"street":"Main St","city":"Stockholm","postalCode":"11122","country":"Sweden"}
+          example: '{"street":"Main St","city":"Stockholm","postalCode":"11122","country":"Sweden"}'
+        - in: query
+          name: receiverAddress
+          required: false
+          schema:
+            type: string
+          description: >-
+            JSON-stringified address object matching AddressInput schema (no `id`). Example: {"street":"Main St","city":"Stockholm","postalCode":"11122","country":"Sweden"}
+          example: '{"street":"Main St","city":"Stockholm","postalCode":"11122","country":"Sweden"}'
         - in: query
           name: limit
           required: false
-          schema: { type: integer }
-          description: Max number of results
+          schema:
+            type: integer
+          description: Max number of results (optional)
         - in: query
           name: readingsLimit
           required: false
-          schema: { type: integer }
-          description: Limit on tracking readings per package
+          schema:
+            type: integer
+          description: Limit on tracking readings per package (optional)
       responses:
         "200":
           description: List of packages
@@ -50,7 +83,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ApiResponsePackageArray"
         "400":
-          description: Missing or invalid senderId/receiverId
+          description: Missing or invalid senderId/receiverId or malformed query params (e.g. invalid JSON in address)
         "500":
           description: Internal server error
 
@@ -83,15 +116,13 @@ paths:
         - in: path
           name: id
           required: true
-          schema: { type: integer }
-        - in: query
-          name: limit
-          required: false
-          schema: { type: integer }
+          schema:
+            type: integer
         - in: query
           name: readingsLimit
           required: false
-          schema: { type: integer }
+          schema:
+            type: integer
       responses:
         "200":
           description: Package found
@@ -112,15 +143,13 @@ paths:
         - in: path
           name: deviceId
           required: true
-          schema: { type: string }
-        - in: query
-          name: limit
-          required: false
-          schema: { type: integer }
+          schema:
+            type: string
         - in: query
           name: readingsLimit
           required: false
-          schema: { type: integer }
+          schema:
+            type: integer
       responses:
         "200":
           description: Package found
@@ -176,11 +205,13 @@ paths:
         - in: path
           name: deviceId
           required: true
-          schema: { type: string }
+          schema:
+            type: string
         - in: query
           name: latest
           required: false
-          schema: { type: boolean }
+          schema:
+            type: boolean
           description: If true, returns only the latest record
       responses:
         "200":
@@ -199,11 +230,14 @@ components:
     ApiResponse:
       type: object
       properties:
-        statusCode: { type: integer }
-        message: { type: string }
+        statusCode:
+          type: integer
+        message:
+          type: string
         errors: {}
         data: {}
-        success: { type: boolean }
+        success:
+          type: boolean
 
     ApiResponsePackage:
       allOf:
@@ -243,12 +277,22 @@ components:
 
     CreatePackagePayload:
       type: object
-      required: [senderId, receiverId, currentCarrierId, deviceId, senderAddress, receiverAddress]
+      required:
+        - senderId
+        - receiverId
+        - currentCarrierId
+        - deviceId
+        - senderAddress
+        - receiverAddress
       properties:
-        senderId: { type: integer }
-        receiverId: { type: integer }
-        currentCarrierId: { type: integer }
-        deviceId: { type: string }
+        senderId:
+          type: integer
+        receiverId:
+          type: integer
+        currentCarrierId:
+          type: integer
+        deviceId:
+          type: string
         senderAddress:
           $ref: "#/components/schemas/AddressInput"
         receiverAddress:
@@ -257,20 +301,33 @@ components:
     Package:
       type: object
       properties:
-        id: { type: integer }
-        sender: { $ref: "#/components/schemas/Profile" }
-        receiver: { $ref: "#/components/schemas/Profile" }
-        currentCarrier: { $ref: "#/components/schemas/Profile" }
-        senderAddress: { $ref: "#/components/schemas/Address" }
-        receiverAddress: { $ref: "#/components/schemas/Address" }
-        deviceId: { type: string }
-        status:
+        id:
+          type: integer
+        sender:
+          $ref: "#/components/schemas/Profile"
+        receiver:
+          $ref: "#/components/schemas/Profile"
+        currentCarrier:
+          $ref: "#/components/schemas/Profile"
+        senderAddress:
+          $ref: "#/components/schemas/Address"
+        receiverAddress:
+          $ref: "#/components/schemas/Address"
+        deviceId:
           type: string
-          enum: [pending, in_transit, delivered, cancelled, out_for_delivery]
-        trackingCode: { type: string }
-        createdAt: { type: string, format: date-time }
-        updatedAt: { type: string, format: date-time }
-        eta: { type: string, format: date-time }
+        status:
+          $ref: "#/components/schemas/PackageStatus"
+        trackingCode:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        eta:
+          type: string
+          format: date-time
         readings:
           type: array
           items:
@@ -279,39 +336,78 @@ components:
     PackageTracking:
       type: object
       properties:
-        id: { type: integer }
-        deviceId: { type: string }
-        lat: { type: number }
-        lng: { type: number }
-        temperature: { type: number }
-        humidity: { type: number }
-        createdAt: { type: string, format: date-time }
+        id:
+          type: integer
+        deviceId:
+          type: string
+        lat:
+          type: number
+        lng:
+          type: number
+        temperature:
+          type: number
+        humidity:
+          type: number
+        createdAt:
+          type: string
+          format: date-time
+
+    PackageStatus:
+      type: string
+      enum:
+        - pending
+        - in_transit
+        - delivered
+        - cancelled
+        - out_for_delivery
 
     Profile:
       type: object
       properties:
-        id: { type: integer }
-        email: { type: string }
-        name: { type: string }
-        role: { type: string }
-        companyName: { type: string }
-        createdAt: { type: string, format: date-time }
-        updatedAt: { type: string, format: date-time }
+        id:
+          type: integer
+        email:
+          type: string
+        name:
+          type: string
+        role:
+          type: string
+        companyName:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
 
     Address:
       type: object
       properties:
-        id: { type: integer }
-        street: { type: string }
-        city: { type: string }
-        postalCode: { type: string }
-        country: { type: string }
+        id:
+          type: integer
+        street:
+          type: string
+        city:
+          type: string
+        postalCode:
+          type: string
+        country:
+          type: string
 
     AddressInput:
       type: object
-      required: [street, city, postalCode, country]
+      required:
+        - street
+        - city
+        - postalCode
+        - country
       properties:
-        street: { type: string }
-        city: { type: string }
-        postalCode: { type: string }
-        country: { type: string }
+        street:
+          type: string
+        city:
+          type: string
+        postalCode:
+          type: string
+        country:
+          type: string
