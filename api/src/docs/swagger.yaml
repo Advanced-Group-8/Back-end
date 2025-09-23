@@ -1,354 +1,317 @@
 openapi: 3.0.0
 info:
-  title: Package Tracking API
+  title: Package & Package Tracking API
   version: 1.0.0
-  description: API for managing package tracking information.
+  description: API for managing packages and tracking information.
+
+servers:
+  - url: http://localhost:3000
+    description: Local server
+  - url: https://t8-server-d2fee2awcybjcqch.swedencentral-01.azurewebsites.net/
+    description: Azure Web App (Production)
+
+tags:
+  - name: Package
+    description: Endpoints for managing packages
+  - name: Package Tracking
+    description: Endpoints for managing package tracking data
 
 paths:
-  /profiles/{id}:
+  /package:
     get:
-      summary: Retrieve a profile by ID
+      tags: [Package]
+      summary: Get packages by sender and receiver
       parameters:
-        - name: id
-          in: path
+        - in: query
+          name: senderId
           required: true
-          description: ID of the profile to retrieve
-          schema:
-            type: integer
-      responses:
-        '200':
-          description: Profile details
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiResponseProfile'
-        '404':
-          description: Profile not found
-
-  /packages:
-    get:
-      summary: Retrieve a list of packages with filters
-      parameters:
-        - name: senderId
-          in: query
-          schema:
-            type: integer
-        - name: receiverId
-          in: query
-          schema:
-            type: integer
-        - name: currentCarrierId
-          in: query
-          schema:
-            type: integer
-        - name: status
-          in: query
-          schema:
-            type: string
-            enum:
-              - pending
-              - in_transit
-              - delivered
-              - cancelled
-              - out_for_delivery
-        - name: limit
-          in: query
-          schema:
-            type: integer
-        - name: readingsLimit
-          in: query
-          schema:
-            type: integer
-      responses:
-        '200':
-          description: A list of packages
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiResponsePackageArray'
-
-  /packages/{id}:
-    get:
-      summary: Retrieve a package by ID
-      parameters:
-        - name: id
-          in: path
+          schema: { type: integer }
+          description: Sender profile ID
+        - in: query
+          name: receiverId
           required: true
-          description: ID of the package to retrieve
-          schema:
-            type: integer
+          schema: { type: integer }
+          description: Receiver profile ID
+        - in: query
+          name: limit
+          required: false
+          schema: { type: integer }
+          description: Max number of results
+        - in: query
+          name: readingsLimit
+          required: false
+          schema: { type: integer }
+          description: Limit on tracking readings per package
       responses:
-        '200':
-          description: Package details
+        "200":
+          description: List of packages
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiResponsePackage'
-        '404':
-          description: Package not found
+                $ref: "#/components/schemas/ApiResponsePackageArray"
+        "400":
+          description: Missing or invalid senderId/receiverId
+        "500":
+          description: Internal server error
 
-  /packages/device/{deviceId}:
-    get:
-      summary: Retrieve a package by device ID
-      parameters:
-        - name: deviceId
-          in: path
-          required: true
-          description: Device ID of the package to retrieve
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Package details
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiResponsePackage'
-        '404':
-          description: Package not found
-
-  /addresses:
     post:
-      summary: Create a new address
+      tags: [Package]
+      summary: Create a new package
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Address'
+              $ref: "#/components/schemas/CreatePackagePayload"
       responses:
-        '201':
-          description: Address created
+        "201":
+          description: Package created successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiResponseAddress'
+                $ref: "#/components/schemas/ApiResponsePackage"
+        "400":
+          description: Invalid request body
+        "500":
+          description: Internal server error
 
-  /packageTracking:
+  /package/{id}:
+    get:
+      tags: [Package]
+      summary: Get package by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+        - in: query
+          name: limit
+          required: false
+          schema: { type: integer }
+        - in: query
+          name: readingsLimit
+          required: false
+          schema: { type: integer }
+      responses:
+        "200":
+          description: Package found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponsePackage"
+        "404":
+          description: Package not found
+        "500":
+          description: Internal server error
+
+  /package/device/{deviceId}:
+    get:
+      tags: [Package]
+      summary: Get package by device ID
+      parameters:
+        - in: path
+          name: deviceId
+          required: true
+          schema: { type: string }
+        - in: query
+          name: limit
+          required: false
+          schema: { type: integer }
+        - in: query
+          name: readingsLimit
+          required: false
+          schema: { type: integer }
+      responses:
+        "200":
+          description: Package found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponsePackage"
+        "404":
+          description: Package not found
+        "500":
+          description: Internal server error
+
+  /package-tracking:
+    get:
+      tags: [Package Tracking]
+      summary: Get all package tracking grouped by device
+      responses:
+        "200":
+          description: Tracking records grouped by device
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponsePackageTrackingArray"
+        "500":
+          description: Internal server error
+
     post:
-      summary: Create new package tracking information
+      tags: [Package Tracking]
+      summary: Create a new package tracking record
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PackageTracking'
+              $ref: "#/components/schemas/PackageTracking"
       responses:
-        '201':
-          description: Package tracking created
+        "201":
+          description: Package tracking record created successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiResponsePackageTracking'
+                $ref: "#/components/schemas/ApiResponsePackageTracking"
+        "400":
+          description: Invalid request body
+        "500":
+          description: Internal server error
+
+  /package-tracking/{deviceId}:
     get:
-      summary: Retrieve all package tracking records grouped by device ID
+      tags: [Package Tracking]
+      summary: Get package tracking by device ID
+      parameters:
+        - in: path
+          name: deviceId
+          required: true
+          schema: { type: string }
+        - in: query
+          name: latest
+          required: false
+          schema: { type: boolean }
+          description: If true, returns only the latest record
       responses:
-        '200':
-          description: Grouped package tracking records
+        "200":
+          description: Tracking records for device
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiResponsePackageTrackingGroupArray'
+                $ref: "#/components/schemas/ApiResponsePackageTrackingArray"
+        "404":
+          description: Device not found
+        "500":
+          description: Internal server error
 
 components:
   schemas:
     ApiResponse:
       type: object
       properties:
-        message:
-          type: string
-          example: "Success"
-        errors:
-          type: object
-          additionalProperties: true
-        data:
-          type: object
-        success:
-          type: boolean
-          example: true
-
-    ApiResponseProfile:
-      allOf:
-        - $ref: '#/components/schemas/ApiResponse'
-        - type: object
-          properties:
-            data:
-              $ref: '#/components/schemas/Profile'
+        statusCode: { type: integer }
+        message: { type: string }
+        errors: {}
+        data: {}
+        success: { type: boolean }
 
     ApiResponsePackage:
       allOf:
-        - $ref: '#/components/schemas/ApiResponse'
+        - $ref: "#/components/schemas/ApiResponse"
         - type: object
           properties:
             data:
-              $ref: '#/components/schemas/Package'
+              $ref: "#/components/schemas/Package"
 
     ApiResponsePackageArray:
       allOf:
-        - $ref: '#/components/schemas/ApiResponse'
+        - $ref: "#/components/schemas/ApiResponse"
         - type: object
           properties:
             data:
               type: array
               items:
-                $ref: '#/components/schemas/Package'
-
-    ApiResponseAddress:
-      allOf:
-        - $ref: '#/components/schemas/ApiResponse'
-        - type: object
-          properties:
-            data:
-              $ref: '#/components/schemas/Address'
+                $ref: "#/components/schemas/Package"
 
     ApiResponsePackageTracking:
       allOf:
-        - $ref: '#/components/schemas/ApiResponse'
+        - $ref: "#/components/schemas/ApiResponse"
         - type: object
           properties:
             data:
-              $ref: '#/components/schemas/PackageTracking'
+              $ref: "#/components/schemas/PackageTracking"
 
-    ApiResponsePackageTrackingGroupArray:
+    ApiResponsePackageTrackingArray:
       allOf:
-        - $ref: '#/components/schemas/ApiResponse'
+        - $ref: "#/components/schemas/ApiResponse"
         - type: object
           properties:
             data:
               type: array
               items:
-                $ref: '#/components/schemas/PackageTrackingGroup'
+                $ref: "#/components/schemas/PackageTracking"
 
-    Profile:
+    CreatePackagePayload:
       type: object
+      required: [senderId, receiverId, currentCarrierId, deviceId, senderAddress, receiverAddress]
       properties:
-        id:
-          type: integer
-          example: 1
-        email:
-          type: string
-          example: "john.doe@example.com"
-        name:
-          type: string
-          example: "John Doe"
-        role:
-          type: string
-          example: "Sender"
-        companyName:
-          type: string
-          example: "Example Corp"
-        createdAt:
-          type: string
-          format: date-time
-          example: "2023-01-01T12:00:00Z"
-        updatedAt:
-          type: string
-          format: date-time
-          example: "2023-01-02T12:00:00Z"
-
-    Address:
-      type: object
-      properties:
-        id:
-          type: integer
-          example: 1
-        street:
-          type: string
-          example: "123 Main St"
-        city:
-          type: string
-          example: "Anytown"
-        postalCode:
-          type: string
-          example: "12345"
-        country:
-          type: string
-          example: "USA"
+        senderId: { type: integer }
+        receiverId: { type: integer }
+        currentCarrierId: { type: integer }
+        deviceId: { type: string }
+        senderAddress:
+          $ref: "#/components/schemas/AddressInput"
+        receiverAddress:
+          $ref: "#/components/schemas/AddressInput"
 
     Package:
       type: object
       properties:
-        id:
-          type: integer
-          example: 1
-        sender:
-          $ref: '#/components/schemas/Profile'
-        receiver:
-          $ref: '#/components/schemas/Profile'
-        currentCarrier:
-          $ref: '#/components/schemas/Profile'
-        senderAddress:
-          $ref: '#/components/schemas/Address'
-        receiverAddress:
-          $ref: '#/components/schemas/Address'
-        deviceId:
-          type: string
-          example: "device-1234"
+        id: { type: integer }
+        sender: { $ref: "#/components/schemas/Profile" }
+        receiver: { $ref: "#/components/schemas/Profile" }
+        currentCarrier: { $ref: "#/components/schemas/Profile" }
+        senderAddress: { $ref: "#/components/schemas/Address" }
+        receiverAddress: { $ref: "#/components/schemas/Address" }
+        deviceId: { type: string }
         status:
           type: string
-          enum:
-            - pending
-            - in_transit
-            - delivered
-            - cancelled
-            - out_for_delivery
-        trackingCode:
-          type: string
-          example: "TRACK123456"
-        createdAt:
-          type: string
-          format: date-time
-          example: "2023-01-01T12:00:00Z"
-        updatedAt:
-          type: string
-          format: date-time
-          example: "2023-01-02T12:00:00Z"
-        eta:
-          type: string
-          format: date-time
-          example: "2023-01-10T12:00:00Z"
+          enum: [pending, in_transit, delivered, cancelled, out_for_delivery]
+        trackingCode: { type: string }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+        eta: { type: string, format: date-time }
         readings:
           type: array
           items:
-            $ref: '#/components/schemas/PackageTracking'
+            $ref: "#/components/schemas/PackageTracking"
 
     PackageTracking:
       type: object
       properties:
-        id:
-          type: integer
-          example: 1
-        deviceId:
-          type: string
-          example: "device-1234"
-        lat:
-          type: number
-          format: float
-          example: 40.7128
-        lng:
-          type: number
-          format: float
-          example: -74.0060
-        temperature:
-          type: number
-          format: float
-          example: 22.5
-        humidity:
-          type: number
-          format: float
-          example: 50.0
-        createdAt:
-          type: string
-          format: date-time
-          example: "2023-01-01T12:00:00Z"
+        id: { type: integer }
+        deviceId: { type: string }
+        lat: { type: number }
+        lng: { type: number }
+        temperature: { type: number }
+        humidity: { type: number }
+        createdAt: { type: string, format: date-time }
 
-    PackageTrackingGroup:
+    Profile:
       type: object
       properties:
-        deviceId:
-          type: string
-          example: "device-1234"
-        readings:
-          type: array
-          items:
-            $ref: '#/components/schemas/PackageTracking'
+        id: { type: integer }
+        email: { type: string }
+        name: { type: string }
+        role: { type: string }
+        companyName: { type: string }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+
+    Address:
+      type: object
+      properties:
+        id: { type: integer }
+        street: { type: string }
+        city: { type: string }
+        postalCode: { type: string }
+        country: { type: string }
+
+    AddressInput:
+      type: object
+      required: [street, city, postalCode, country]
+      properties:
+        street: { type: string }
+        city: { type: string }
+        postalCode: { type: string }
+        country: { type: string }

@@ -43,8 +43,6 @@ const PackageContoller = {
     const { deviceId } = req.params;
     const filters = extractPackageFilter(req);
 
-    console.log("filters", filters);
-
     try {
       const foundPackage = await PackageService.getByDeviceId({ ...filters, deviceId });
 
