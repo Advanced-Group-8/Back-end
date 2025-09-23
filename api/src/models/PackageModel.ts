@@ -3,6 +3,7 @@ import {
   GetPackagesWithFilter,
   GetPackageByIdWithFilter,
   GetPackageByDeviceIdWithFilter,
+  PackageUpdateFields,
 } from "@/src/types/types.js";
 import { PackageTable } from "@/types/dbTablesTypes.js";
 import { Package } from "@/types/responseTypes.js";
@@ -389,6 +390,59 @@ const PackageModel = {
         ]
       )
     )[0];
+  },
+  update: async (
+    where: Record<string, string | number>,
+    fields: PackageUpdateFields
+  ): Promise<Package | null> => {
+    const setClauses: string[] = [];
+    const values: (string | number)[] = [];
+
+    Object.entries(fields).forEach(([key, value]) => {
+      values.push(value!);
+      setClauses.push(`${key} = $${values.length}`);
+    });
+
+    if (setClauses.length === 0) {
+      throw new Error("No fields provided to update");
+    }
+
+    const whereClauses: string[] = [];
+
+    Object.entries(where).forEach(([key, value]) => {
+      values.push(value);
+      whereClauses.push(`${key} = $${values.length}`);
+    });
+
+    if (whereClauses.length === 0) {
+      throw new Error("No filter provided for update");
+    }
+
+    return (
+      (
+        await executeQuery<Package>(
+          `
+          UPDATE package
+          SET ${setClauses.join(", ")}
+          WHERE ${whereClauses.join(" AND ")}
+          RETURNING
+            id,
+            sender_id AS "senderId",
+            receiver_id AS "receiverId",
+            sender_address_id AS "senderAddressId",
+            receiver_address_id AS "receiverAddressId",
+            current_carrier_id AS "currentCarrierId",
+            device_id AS "deviceId",
+            status,
+            tracking_code AS "trackingCode",
+            created_at AS "createdAt",
+            updated_at AS "updatedAt",
+            eta;
+        `,
+          values
+        )
+      )[0] ?? null
+    );
   },
 };
 

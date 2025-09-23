@@ -135,6 +135,28 @@ paths:
         "500":
           description: Internal server error
 
+    patch:
+      tags: [Package]
+      summary: Step the status of a package by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID of the package to update
+      responses:
+        "200":
+          description: Package status updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponsePackage"
+        "400":
+          description: Invalid package ID or request
+        "500":
+          description: Internal server error
+
   /package/device/{deviceId}:
     get:
       tags: [Package]

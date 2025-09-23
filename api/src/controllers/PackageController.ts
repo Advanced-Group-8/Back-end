@@ -69,6 +69,19 @@ const PackageContoller = {
       next(error);
     }
   },
+  updateStatus: async (req: GetPackageByIdRequest, _res: Response, next: NextFunction) => {
+    try {
+      const updatedPackage = await PackageService.updatePackageStatus({ id: req.params.id });
+
+      next({
+        statusCode: 200,
+        message: "Package status updated successfully",
+        data: updatedPackage,
+      } as ApiResponse);
+    } catch (error) {
+      next(error);
+    }
+  },
 };
 
 export default PackageContoller;
