@@ -1,7 +1,7 @@
 import { PoolClient, QueryResult, QueryResultRow } from "pg";
-import { pool } from "../db/config";
+import { pool } from "../db/config.js";
 import { addDays } from "date-fns";
-import { ApiResponse } from "@/types/responseTypes";
+import { ApiResponse } from "@/types/responseTypes.js";
 
 export const sanitizeValues = <T>(values: (string | T)[]): (string | T)[] => {
   return values.map((value) => (typeof value === "string" ? value.trim() : value));

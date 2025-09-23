@@ -7,7 +7,7 @@ import {
   GetPackagesWithFilter,
   GetPackageTrackingByDeviceId,
   PackageFilter,
-} from "./types";
+} from "./types.js";
 
 export type CreatePackageRequest = Request<{}, {}, CreatePackagePayload>;
 

@@ -1,4 +1,4 @@
-import { isOkApiResponse } from "@/utils";
+import { isOkApiResponse } from "@/utils/index.js";
 import { NextFunction, Request, Response } from "express";
 
 const ResponseMiddleware = {

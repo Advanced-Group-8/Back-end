@@ -1,5 +1,5 @@
-import AddressModel from "@/models/AddressModel";
-import { CreateAddress } from "@/types/types";
+import AddressModel from "@/models/AddressModel.js";
+import { CreateAddress } from "@/types/types.js";
 
 const AddressService = {
   create: async (payload: CreateAddress) => {

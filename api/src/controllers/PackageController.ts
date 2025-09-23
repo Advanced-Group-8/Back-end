@@ -3,11 +3,11 @@ import {
   GetPackageByDeviceIdRequest,
   GetPackageByIdRequest,
   GetPackagesRequest,
-} from "@/types/requestTypes";
-import PackageService from "../services/PackageService";
+} from "@/types/requestTypes.js";
+import PackageService from "../services/PackageService.js";
 import { NextFunction, Response } from "express";
-import { ApiResponse } from "@/types/responseTypes";
-import { extractGetPackagesQuery, extractPackageFilter } from "@/utils/request";
+import { ApiResponse } from "@/types/responseTypes.js";
+import { extractGetPackagesQuery, extractPackageFilter } from "@/utils/request.js";
 
 const PackageContoller = {
   get: async (req: GetPackagesRequest, _res: Response, next: NextFunction) => {
@@ -42,8 +42,6 @@ const PackageContoller = {
   getByDeviceId: async (req: GetPackageByDeviceIdRequest, _res: Response, next: NextFunction) => {
     const { deviceId } = req.params;
     const filters = extractPackageFilter(req);
-
-    console.log("filters", filters);
 
     try {
       const foundPackage = await PackageService.getByDeviceId({ ...filters, deviceId });

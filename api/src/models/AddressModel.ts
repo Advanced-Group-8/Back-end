@@ -1,6 +1,6 @@
-import { AddressTable } from "@/types/dbTablesTypes";
-import { CreateAddress } from "@/types/types";
-import { executeQuery } from "@/utils";
+import { AddressTable } from "@/types/dbTablesTypes.js";
+import { CreateAddress } from "@/types/types.js";
+import { executeQuery } from "@/utils/index.js";
 
 const AddressModel = {
   create: async ({ street, city, postalCode, country }: CreateAddress) => {

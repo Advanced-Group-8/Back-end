@@ -1,30 +1,26 @@
 import express from "express";
 import dotenv from "dotenv";
-import PackageRouter from "./routes/PackageRouter";
-import PackageTrackingRouter from "./routes/PackageTrackingRouter";
-import "./db/config";
-import ErrorMiddleware from "./middlewares/ErrorMiddleware";
-import ResponseMiddleware from "./middlewares/ResponseMiddleware";
+import cors from "cors";
+import helmet from "helmet";
+import PackageRouter from "./routes/PackageRouter.js";
+import PackageTrackingRouter from "./routes/PackageTrackingRouter.js";
+import "./db/config.js";
+import ErrorMiddleware from "./middlewares/ErrorMiddleware.js";
+import ResponseMiddleware from "./middlewares/ResponseMiddleware.js";
 import swaggerUi from "swagger-ui-express";
-import fs from "fs";
-import yaml from "js-yaml";
-import path from "path";
-import { fileURLToPath } from "url";
-import { executeQuery } from "./utils";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-const swaggerPath = path.resolve(__dirname, "./docs/swagger.yaml");
-const swaggerSpec = yaml.load(fs.readFileSync(swaggerPath, "utf8"));
+import { swaggerSpec } from "./docs/swagger.js";
+import LogRouter from "./routes/LogRouter.js";
 
 dotenv.config();
 
 const app = express();
-const PORT = Number(process.env.PORT || "3000");
+
+const PORT = Number(process.env.PORT || process.env.WEBSITES_PORT || "3000");
 const HOST = "0.0.0.0";
 
 app.use(express.json());
+app.use(cors());
+app.use(helmet());
 
 app.get("/", (_req, res) => {
   res.redirect("/api-docs");
@@ -34,20 +30,15 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec!));
 
 // Routes
 app.use("/package", PackageRouter);
-
 app.use("/package-tracking", PackageTrackingRouter);
+app.use("/logs", LogRouter);
 
-// Custom response middleware (must come before notFound + errorHandler)
+
+// Middlewares
 app.use(ResponseMiddleware.respond);
-
-//404 handler - route not found
 app.use(ErrorMiddleware.notFoundHandler);
-
-//Generic error handler
 app.use(ErrorMiddleware.errorHandler);
 
-console.log(await executeQuery("SELECT NOW();"));
-
 app.listen(PORT, HOST, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`🚀 Server running on http://${HOST}:${PORT}`);
 });
