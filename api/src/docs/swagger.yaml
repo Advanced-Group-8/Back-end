@@ -149,9 +149,67 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponsePackageTrackingGroupArray'
+  /logs:
+    get:
+      summary: Hämta backend-loggfilen
+      description: Returnerar loggfilen som text/plain för nedladdning.
+      responses:
+        '200':
+          description: Loggfilen returneras som text
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: |
+                  {"timestamp":"2025-09-23T12:00:00Z","level":"INFO","message":"Server started"}
+                  {"timestamp":"2025-09-23T12:01:00Z","level":"ERROR","message":"Något gick fel"}
+        '404':
+          description: Loggfilen finns inte
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Loggfilen finns inte.
+    delete: 
+      summary: Rensa backend-loggfilen
+      description: Tömmer loggfilen på servern.
+      responses:
+        '200':
+          description: Loggfilen är nu rensad
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Loggfilen är nu rensad.
+        '500':
+          description: Kunde inte rensa loggfilen
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Kunde inte rensa loggfilen.
+                  error:
+                    type: string
+                    example: Felmeddelande från servern
 
 components:
   schemas:
+    logs:
+      type: object
+      properties:
+        message:
+          type: string
+          example: 
+
     ApiResponse:
       type: object
       properties:
