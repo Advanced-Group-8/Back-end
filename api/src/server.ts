@@ -8,6 +8,7 @@ import ResponseMiddleware from "./middlewares/ResponseMiddleware.js";
 import swaggerUi from "swagger-ui-express";
 import { executeQuery } from "./utils/index.js";
 import { swaggerSpec } from "./docs/swagger.js";
+import LogRouter from "./routes/LogRouter.js";
 
 dotenv.config();
 
@@ -37,6 +38,7 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec!));
 // Routes
 app.use("/package", PackageRouter);
 app.use("/package-tracking", PackageTrackingRouter);
+app.use("/logs", LogRouter);
 
 // Middlewares
 app.use(ResponseMiddleware.respond);
