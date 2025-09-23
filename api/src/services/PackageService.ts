@@ -4,7 +4,6 @@ import {
   GetPackagesWithFilter,
   GetPackageByIdWithFilter,
   GetPackageByDeviceIdWithFilter,
-  PackageUpdateFields,
   GetPackageById,
 } from "@/src/types/types.js";
 import { getRandomETA, getRandomTrackingCode, omit } from "@/utils/index.js";
@@ -67,7 +66,7 @@ const PackageService = {
       readings: [],
     } as Package;
   },
-  updatePackageStatus: async (payload: GetPackageById): Promise<Package | null> => {
+  updatePackageStatus: async (payload: GetPackageById): Promise<Package> => {
     const foundPackage = await PackageService.getById(payload);
     const status = foundPackage?.status;
 
@@ -80,7 +79,9 @@ const PackageService = {
             ? "delivered"
             : "cancelled";
 
-    return await PackageModel.update({ id: payload.id }, { status: newStatus });
+    const updatedPackage = (await PackageModel.update({ id: payload.id }, { status: newStatus }))!;
+
+    return { ...updatedPackage, status: newStatus };
   },
 };
 
