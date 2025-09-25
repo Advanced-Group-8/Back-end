@@ -1,0 +1,82 @@
+# -------------------------------
+# Get all packages
+# -------------------------------
+GET https://t8-server-d2fee2awcybjcqch.swedencentral-01.azurewebsites.net/package?senderId=1&receiverId=2 HTTP/1.1
+Content-Type: application/json
+
+###
+
+# -------------------------------
+# Get package by ID
+# -------------------------------
+GET https://t8-server-d2fee2awcybjcqch.swedencentral-01.azurewebsites.net/package/1 HTTP/1.1
+Content-Type: application/json
+
+###
+
+# -------------------------------
+# Get package by device ID
+# -------------------------------
+GET https://t8-server-d2fee2awcybjcqch.swedencentral-01.azurewebsites.net/package/device/DEVICE001 HTTP/1.1
+Content-Type: application/json
+
+###
+
+# -------------------------------
+# Create a new package
+# -------------------------------
+POST https://t8-server-d2fee2awcybjcqch.swedencentral-01.azurewebsites.net/package HTTP/1.1
+Content-Type: application/json
+
+{
+  "senderId": 1,
+  "receiverId": 2,
+  "currentCarrierId": 3,
+  "deviceId": "DEVICE001",
+  "senderAddress": {
+    "street": "Main St",
+    "city": "Stockholm",
+    "postalCode": "11122",
+    "country": "Sweden"
+  },
+  "receiverAddress": {
+    "street": "Second St",
+    "city": "Gothenburg",
+    "postalCode": "22233",
+    "country": "Sweden"
+  }
+}
+
+###
+
+# -------------------------------
+# Create a package tracking record
+# -------------------------------
+POST https://t8-server-d2fee2awcybjcqch.swedencentral-01.azurewebsites.net/package-tracking HTTP/1.1
+Content-Type: application/json
+
+{
+  "deviceId": "DEVICE001",
+  "lat": 59.3293,
+  "lng": 18.0686,
+  "temperature": 23,
+  "humidity": 45,
+  "createdAt": "2025-09-23T12:00:00Z"
+}
+
+###
+
+# -------------------------------
+# Get package tracking by device
+# -------------------------------
+GET https://t8-server-d2fee2awcybjcqch.swedencentral-01.azurewebsites.net/package-tracking/DEVICE001?latest=true HTTP/1.1
+Content-Type: application/json
+
+###
+
+# -------------------------------
+# Step package status
+# -------------------------------
+PATCH https://t8-server-d2fee2awcybjcqch.swedencentral-01.azurewebsites.net/package/2 HTTP/1.1
+Content-Type: application/json
+

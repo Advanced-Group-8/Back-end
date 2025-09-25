@@ -135,6 +135,28 @@ paths:
         "500":
           description: Internal server error
 
+    patch:
+      tags: [Package]
+      summary: Step the status of a package by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID of the package to update
+      responses:
+        "200":
+          description: Package status updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponsePackage"
+        "400":
+          description: Invalid package ID or request
+        "500":
+          description: Internal server error
+
   /package/device/{deviceId}:
     get:
       tags: [Package]
@@ -229,7 +251,7 @@ paths:
       summary: Hämta backend-loggfilen
       description: Returnerar loggfilen som text/plain för nedladdning.
       responses:
-        '200':
+        "200":
           description: Loggfilen returneras som text
           content:
             text/plain:
@@ -238,7 +260,7 @@ paths:
                 example: |
                   {"timestamp":"2025-09-23T12:00:00Z","level":"INFO","message":"Server started"}
                   {"timestamp":"2025-09-23T12:01:00Z","level":"ERROR","message":"Något gick fel"}
-        '404':
+        "404":
           description: Loggfilen finns inte
           content:
             application/json:
@@ -248,11 +270,11 @@ paths:
                   message:
                     type: string
                     example: Loggfilen finns inte.
-    delete: 
+    delete:
       summary: Rensa backend-loggfilen
       description: Tömmer loggfilen på servern.
       responses:
-        '200':
+        "200":
           description: Loggfilen är nu rensad
           content:
             application/json:
@@ -262,7 +284,7 @@ paths:
                   message:
                     type: string
                     example: Loggfilen är nu rensad.
-        '500':
+        "500":
           description: Kunde inte rensa loggfilen
           content:
             application/json:

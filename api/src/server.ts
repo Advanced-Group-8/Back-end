@@ -33,7 +33,6 @@ app.use("/package", PackageRouter);
 app.use("/package-tracking", PackageTrackingRouter);
 app.use("/logs", LogRouter);
 
-
 // Middlewares
 app.use(ResponseMiddleware.respond);
 app.use(ErrorMiddleware.notFoundHandler);

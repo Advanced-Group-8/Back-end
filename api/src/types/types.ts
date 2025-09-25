@@ -51,3 +51,15 @@ export type GetPackageTrackingByDeviceId = {
 };
 
 export type PackageWithReadings = PackageTable & { readings: PackageTrackingTable[] };
+
+export type PackageUpdateFields = Partial<{
+  senderId: number;
+  receiverId: number;
+  currentCarrierId: number;
+  deviceId: string;
+  status: string;
+  trackingCode: string;
+  eta: string;
+  senderAddressId: number;
+  receiverAddressId: number;
+}>;
