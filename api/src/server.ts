@@ -5,7 +5,7 @@ import helmet from "helmet";
 import PackageRouter from "./routes/PackageRouter.js";
 import PackageTrackingRouter from "./routes/PackageTrackingRouter.js";
 import LogRouter from "./routes/LogRouter.js";
-import AuthRouter from "./routes/LogRouter.js";
+import AuthRouter from "./routes/AuthRouter.js";
 import "./db/config.js";
 import ErrorMiddleware from "./middlewares/ErrorMiddleware.js";
 import ResponseMiddleware from "./middlewares/ResponseMiddleware.js";

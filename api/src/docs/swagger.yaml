@@ -2,7 +2,7 @@ openapi: 3.0.0
 info:
   title: Package & Package Tracking API
   version: 1.0.0
-  description: API for managing packages and tracking information.
+  description: API for managing packages, tracking information, logs, and authentication.
 
 servers:
   - url: http://localhost:3000
@@ -15,8 +15,60 @@ tags:
     description: Endpoints for managing packages
   - name: Package Tracking
     description: Endpoints for managing package tracking data
+  - name: Logs
+    description: Endpoints for managing and viewing backend logs
+  - name: Auth
+    description: Endpoints for authentication (sign-up and sign-in)
 
 paths:
+  /auth/sign-up:
+    post:
+      tags: [Auth]
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SignUpPayload"
+      responses:
+        "201":
+          description: User registered successfully and token issued
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponseAuth"
+        "400":
+          description: Invalid request body
+        "409":
+          description: Email or name already taken
+        "500":
+          description: Internal server error
+
+  /auth/sign-in:
+    post:
+      tags: [Auth]
+      summary: Authenticate user and issue JWT
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SignInPayload"
+      responses:
+        "200":
+          description: User authenticated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponseAuth"
+        "400":
+          description: Invalid credentials or request body
+        "401":
+          description: Unauthorized (invalid credentials)
+        "500":
+          description: Internal server error
+
   /package:
     get:
       tags: [Package]
@@ -45,36 +97,33 @@ paths:
           required: false
           schema:
             $ref: "#/components/schemas/PackageStatus"
-          description: Filter packages by status (optional). See PackageStatus enum.
+          description: Filter packages by status (optional)
         - in: query
           name: senderAddress
           required: false
           schema:
             type: string
-          description: >-
-            JSON-stringified address object matching AddressInput schema (no `id`). Your code parses this
-            via `parseJson(query.senderAddress, {})`. Example: {"street":"Main St","city":"Stockholm","postalCode":"11122","country":"Sweden"}
+          description: JSON-stringified address object
           example: '{"street":"Main St","city":"Stockholm","postalCode":"11122","country":"Sweden"}'
         - in: query
           name: receiverAddress
           required: false
           schema:
             type: string
-          description: >-
-            JSON-stringified address object matching AddressInput schema (no `id`). Example: {"street":"Main St","city":"Stockholm","postalCode":"11122","country":"Sweden"}
+          description: JSON-stringified address object
           example: '{"street":"Main St","city":"Stockholm","postalCode":"11122","country":"Sweden"}'
         - in: query
           name: limit
           required: false
           schema:
             type: integer
-          description: Max number of results (optional)
+          description: Max number of results
         - in: query
           name: readingsLimit
           required: false
           schema:
             type: integer
-          description: Limit on tracking readings per package (optional)
+          description: Limit on tracking readings per package
       responses:
         "200":
           description: List of packages
@@ -83,7 +132,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ApiResponsePackageArray"
         "400":
-          description: Missing or invalid senderId/receiverId or malformed query params (e.g. invalid JSON in address)
+          description: Missing or invalid query params
         "500":
           description: Internal server error
 
@@ -144,7 +193,6 @@ paths:
           required: true
           schema:
             type: integer
-          description: ID of the package to update
       responses:
         "200":
           description: Package status updated successfully
@@ -246,22 +294,21 @@ paths:
           description: Device not found
         "500":
           description: Internal server error
+
   /logs:
     get:
-      summary: Hämta backend-loggfilen
-      description: Returnerar loggfilen som text/plain för nedladdning.
+      tags: [Logs]
+      summary: Retrieve the backend log file
+      description: Returns the log file as `text/plain` for download.
       responses:
         "200":
-          description: Loggfilen returneras som text
+          description: The log file is returned as text
           content:
             text/plain:
               schema:
                 type: string
-                example: |
-                  {"timestamp":"2025-09-23T12:00:00Z","level":"INFO","message":"Server started"}
-                  {"timestamp":"2025-09-23T12:01:00Z","level":"ERROR","message":"Något gick fel"}
         "404":
-          description: Loggfilen finns inte
+          description: Log file not found
           content:
             application/json:
               schema:
@@ -269,13 +316,13 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: Loggfilen finns inte.
     delete:
-      summary: Rensa backend-loggfilen
-      description: Tömmer loggfilen på servern.
+      tags: [Logs]
+      summary: Clear the backend log file
+      description: Empties the log file on the server.
       responses:
         "200":
-          description: Loggfilen är nu rensad
+          description: The log file has been cleared
           content:
             application/json:
               schema:
@@ -283,9 +330,8 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: Loggfilen är nu rensad.
         "500":
-          description: Kunde inte rensa loggfilen
+          description: Failed to clear the log file
           content:
             application/json:
               schema:
@@ -293,10 +339,8 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: Kunde inte rensa loggfilen.
                   error:
                     type: string
-                    example: Felmeddelande från servern
 
 components:
   schemas:
@@ -313,6 +357,14 @@ components:
           type: string
         success:
           type: boolean
+
+    ApiResponseAuth:
+      allOf:
+        - $ref: "#/components/schemas/ApiResponse"
+        - type: object
+          properties:
+            token:
+              type: string
 
     ApiResponsePackage:
       allOf:
@@ -349,6 +401,34 @@ components:
               type: array
               items:
                 $ref: "#/components/schemas/PackageTracking"
+
+    SignUpPayload:
+      type: object
+      required: [email, name, password, role, companyName]
+      properties:
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+        password:
+          type: string
+        role:
+          type: string
+        companyName:
+          type: string
+
+    SignInPayload:
+      type: object
+      required: [password]
+      properties:
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+        password:
+          type: string
 
     CreatePackagePayload:
       type: object
@@ -472,11 +552,7 @@ components:
 
     AddressInput:
       type: object
-      required:
-        - street
-        - city
-        - postalCode
-        - country
+      required: [street, city, postalCode, country]
       properties:
         street:
           type: string
