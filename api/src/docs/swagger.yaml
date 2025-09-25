@@ -309,6 +309,8 @@ components:
           type: string
         errors: {}
         data: {}
+        token:
+          type: string
         success:
           type: boolean
 
