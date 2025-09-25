@@ -42,7 +42,7 @@ const ProfileModel = {
           email,
           name,
           role,
-          password_hash AS password_
+          password_hash AS "passwordHash"
           company_name AS "companyName",
           created_at AT TIME ZONE 'UTC' AS "createdAt",
           updated_at AT TIME ZONE 'UTC' AS "updatedAt"

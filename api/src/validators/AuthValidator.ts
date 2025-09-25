@@ -3,7 +3,7 @@ import { NextFunction, Request, Response } from "express";
 
 const AuthValidator = {
   signUp: {
-    body: async (req: Request, _res: Response, next: NextFunction) => {
+    body: (req: Request, _res: Response, next: NextFunction) => {
       try {
         signUpSchmea.parse(req.body);
         next();
@@ -13,7 +13,7 @@ const AuthValidator = {
     },
   },
   signIn: {
-    body: async (req: Request, _res: Response, next: NextFunction) => {
+    body: (req: Request, _res: Response, next: NextFunction) => {
       try {
         signInSchema.parse(req.body);
         next();
