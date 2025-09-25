@@ -246,6 +246,57 @@ paths:
           description: Device not found
         "500":
           description: Internal server error
+  /logs:
+    get:
+      summary: Hämta backend-loggfilen
+      description: Returnerar loggfilen som text/plain för nedladdning.
+      responses:
+        '200':
+          description: Loggfilen returneras som text
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: |
+                  {"timestamp":"2025-09-23T12:00:00Z","level":"INFO","message":"Server started"}
+                  {"timestamp":"2025-09-23T12:01:00Z","level":"ERROR","message":"Något gick fel"}
+        '404':
+          description: Loggfilen finns inte
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Loggfilen finns inte.
+    delete: 
+      summary: Rensa backend-loggfilen
+      description: Tömmer loggfilen på servern.
+      responses:
+        '200':
+          description: Loggfilen är nu rensad
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Loggfilen är nu rensad.
+        '500':
+          description: Kunde inte rensa loggfilen
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Kunde inte rensa loggfilen.
+                  error:
+                    type: string
+                    example: Felmeddelande från servern
 
 components:
   schemas:
@@ -389,6 +440,7 @@ components:
         id:
           type: integer
         email:
+<<<<<<< HEAD
           type: string
         name:
           type: string
@@ -433,3 +485,49 @@ components:
           type: string
         country:
           type: string
+=======
+          type: string
+        name:
+          type: string
+        role:
+          type: string
+        companyName:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    Address:
+      type: object
+      properties:
+        id:
+          type: integer
+        street:
+          type: string
+        city:
+          type: string
+        postalCode:
+          type: string
+        country:
+          type: string
+
+    AddressInput:
+      type: object
+      required:
+        - street
+        - city
+        - postalCode
+        - country
+      properties:
+        street:
+          type: string
+        city:
+          type: string
+        postalCode:
+          type: string
+        country:
+          type: string
+>>>>>>> 34190bb917042953be034cdcc05f85cdc5bc8bd7
