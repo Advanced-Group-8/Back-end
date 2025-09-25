@@ -5,10 +5,11 @@ import {
   GetPackageTrackingByDeviceId,
   PackageTrackingGroup,
 } from "@/types/types.js";
+import { logger } from "@/utils/logger.js";
 
 const PackageTrackingModel = {
   create: async ({ deviceId, lat, lng, temperature, humidity }: CreatePackageTracking) => {
-    return (
+    const result = (
       await executeQuery<PackageTracking>(
         `
             INSERT INTO package_tracking (device_id, lat, lng, temperature, humidity)
@@ -18,12 +19,14 @@ const PackageTrackingModel = {
         [deviceId, lat, lng, temperature, humidity]
       )
     )[0];
+    logger.info("Ny tracking registrerad", { deviceId, lat, lng, temperature, humidity, createdAt: result.createdAt });
+    return result;
   },
   getByDevice: async ({
     deviceId,
     latest,
   }: GetPackageTrackingByDeviceId & { latest?: boolean }): Promise<PackageTracking[]> => {
-    return await executeQuery<PackageTracking>(
+    const result = await executeQuery<PackageTracking>(
       `
         SELECT 
         id, 
@@ -40,9 +43,11 @@ const PackageTrackingModel = {
     `,
       [deviceId]
     );
+    logger.info("Information för enhet hämtad", {deviceId});
+    return result;
   },
   getAllGroupedByDeviceId: async (): Promise<PackageTrackingGroup[]> => {
-    return await executeQuery(
+    const rawResult = await executeQuery(
       `
         SELECT 
         device_id as "deviceId",
@@ -62,6 +67,12 @@ const PackageTrackingModel = {
         ORDER BY device_id;
     `
     );
+    logger.info("Information för alla enheter hämtad")
+    const result: PackageTrackingGroup[] = rawResult.map((row: any) => ({
+      deviceId: row.deviceId,
+      readings: row.readings,
+    }));
+    return result;
   },
 };
 
