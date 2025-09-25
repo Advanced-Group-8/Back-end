@@ -8,7 +8,7 @@ const logFile = path.join(logDir, "backend.log");
 
 function logToFile(level: string, message: string, meta?: unknown) {
   const entry = {
-    timestamp: new Date().toISOString(),
+    timestamp: new Date().toLocaleString("sv-SE", { timeZone: "Europe/Stockholm" }),
     level,
     message,
     ...(meta ? { meta } : {}),
