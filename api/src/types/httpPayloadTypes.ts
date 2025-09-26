@@ -52,6 +52,20 @@ export type CreatePackagePayload = {
   };
 };
 
+export type SignUpPayload = {
+  email: string;
+  name: string;
+  password: string;
+  role: string;
+  companyName: string;
+};
+
+export type SignInPayload = {
+  email?: string;
+  name?: string;
+  password: string;
+};
+
 export type PackageTracking = {
   /**
    * Unique identifier for the tracking record.
