@@ -8,6 +8,7 @@ import {
   GetPackageTrackingByDeviceId,
   PackageFilter,
 } from "./types.js";
+import { SignInPayload, SignUpPayload } from "./httpPayloadTypes.js";
 
 export type CreatePackageRequest = Request<{}, {}, CreatePackagePayload>;
 
@@ -29,3 +30,7 @@ export type GetPackageTrackingByDeviceIdRequest = Request<
   {},
   GetPackageTrackingByDeviceIdQuery
 >;
+
+export type SignUpRequest = Request<{}, {}, SignUpPayload>;
+
+export type SignInRequest = Request<{}, {}, SignInPayload>;

@@ -9,6 +9,14 @@ export type ProfileTable = {
   updatedAt: string;
 };
 
+export type CreateProfile = {
+  email: string;
+  name: string;
+  passwordHash: string;
+  role: string;
+  companyName: string;
+};
+
 export type AddressTable = {
   id: number;
   street: string;

@@ -3,6 +3,7 @@ export type ApiResponse<T = unknown> = {
   message?: string;
   errors?: unknown;
   data?: T | T[];
+  token?: string;
   success?: boolean;
 };
 
