@@ -4,12 +4,13 @@ import cors from "cors";
 import helmet from "helmet";
 import PackageRouter from "./routes/PackageRouter.js";
 import PackageTrackingRouter from "./routes/PackageTrackingRouter.js";
+import LogRouter from "./routes/LogRouter.js";
+import AuthRouter from "./routes/AuthRouter.js";
 import "./db/config.js";
 import ErrorMiddleware from "./middlewares/ErrorMiddleware.js";
 import ResponseMiddleware from "./middlewares/ResponseMiddleware.js";
 import swaggerUi from "swagger-ui-express";
 import { swaggerSpec } from "./docs/swagger.js";
-import LogRouter from "./routes/LogRouter.js";
 
 dotenv.config();
 
@@ -32,6 +33,7 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec!));
 app.use("/package", PackageRouter);
 app.use("/package-tracking", PackageTrackingRouter);
 app.use("/logs", LogRouter);
+app.use("/auth", AuthRouter);
 
 // Middlewares
 app.use(ResponseMiddleware.respond);
