@@ -11,6 +11,8 @@ import AddressService from "./AddressService.js";
 import { Address, Package, PackageStatus } from "@/types/responseTypes.js";
 import ProfileService from "./ProfileService.js";
 
+import { logger } from "@/utils/logger.js";
+
 const PackageService = {
   get: async (payload: GetPackagesWithFilter) => {
     return await PackageModel.get(payload);
@@ -50,6 +52,8 @@ const PackageService = {
       eta: getRandomETA(),
     });
 
+    logger.info(`Package created with tracking code: `, createdPackage.trackingCode);
+    
     return {
       ...omit(createdPackage, [
         "senderId",
@@ -80,6 +84,8 @@ const PackageService = {
             : "cancelled";
 
     const updatedPackage = (await PackageModel.update({ id: payload.id }, { status: newStatus }))!;
+
+    logger.info(`Package status for package id ${foundPackage?.id} changed to: `, newStatus);
 
     return { ...updatedPackage, status: newStatus };
   },
