@@ -103,13 +103,13 @@ const PackageValidator = {
     return packageId;
   },
   hasDeviceId: async ({ deviceId }: GetPackageByDeviceId) => {
-    const packageId = (await PackageService.getByDeviceId({ deviceId }))?.id;
+    const packages = await PackageService.getByDeviceId({ deviceId });
 
-    if (!packageId) {
+    if (packages.length === 0) {
       throw new NotFoundError(`No package with deviceId '${deviceId}' found`);
     }
 
-    return packageId;
+    return packages;
   },
 };
 
