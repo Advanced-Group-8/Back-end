@@ -32,7 +32,7 @@ export type Package = {
   currentCarrier: Profile;
   senderAddress: Address;
   receiverAddress: Address;
-  deviceId: string;
+  deviceId: number;
   status: PackageStatus;
   trackingCode: string;
   createdAt: string;

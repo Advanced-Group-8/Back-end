@@ -248,7 +248,7 @@ const PackageModel = {
   getByDeviceId: async ({
     deviceId,
     readingsLimit,
-  }: GetPackageByDeviceIdWithFilter): Promise<Package | null> => {
+  }: GetPackageByDeviceIdWithFilter): Promise<Package[]> => {
     const values: (string | number)[] = [deviceId];
     const limitClause = readingsLimit !== undefined ? `LIMIT ${readingsLimit}` : "";
 
@@ -335,7 +335,7 @@ const PackageModel = {
       values
     );
 
-    return result[0] ?? null;
+    return result;
   },
   create: async ({
     senderId,
@@ -394,7 +394,7 @@ const PackageModel = {
   update: async (
     where: Record<string, string | number>,
     fields: PackageUpdateFields
-  ): Promise<Package | null> => {
+  ): Promise<Package[]> => {
     const setClauses: string[] = [];
     const values: (string | number)[] = [];
 
@@ -418,31 +418,29 @@ const PackageModel = {
       throw new Error("No filter provided for update");
     }
 
-    return (
-      (
-        await executeQuery<Package>(
-          `
-          UPDATE package
-          SET ${setClauses.join(", ")}
-          WHERE ${whereClauses.join(" AND ")}
-          RETURNING
-            id,
-            sender_id AS "senderId",
-            receiver_id AS "receiverId",
-            sender_address_id AS "senderAddressId",
-            receiver_address_id AS "receiverAddressId",
-            current_carrier_id AS "currentCarrierId",
-            device_id AS "deviceId",
-            status,
-            tracking_code AS "trackingCode",
-            created_at AS "createdAt",
-            updated_at AS "updatedAt",
-            eta;
-        `,
-          values
-        )
-      )[0] ?? null
+    const result = await executeQuery<Package>(
+      `
+        UPDATE package
+        SET ${setClauses.join(", ")}
+        WHERE ${whereClauses.join(" AND ")}
+        RETURNING
+          id,
+          sender_id AS "senderId",
+          receiver_id AS "receiverId",
+          sender_address_id AS "senderAddressId",
+          receiver_address_id AS "receiverAddressId",
+          current_carrier_id AS "currentCarrierId",
+          device_id AS "deviceId",
+          status,
+          tracking_code AS "trackingCode",
+          created_at AS "createdAt",
+          updated_at AS "updatedAt",
+          eta;
+      `,
+      values
     );
+
+    return result;
   },
 };
 

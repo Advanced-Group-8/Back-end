@@ -10,6 +10,7 @@ const AuthController = {
       const profile = await ProfileService.create(req.body);
 
       next({
+        message: "Account created successfully",
         statusCode: 201,
         token: sign(profile),
       } as ApiResponse);
@@ -22,6 +23,7 @@ const AuthController = {
       const profile = await ProfileService.signIn(req.body);
 
       next({
+        message: "Login successful",
         statusCode: 200,
         token: sign(profile),
       } as ApiResponse);

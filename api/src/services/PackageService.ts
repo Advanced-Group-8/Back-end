@@ -66,23 +66,6 @@ const PackageService = {
       readings: [],
     } as Package;
   },
-  updatePackageStatus: async (payload: GetPackageById): Promise<Package> => {
-    const foundPackage = await PackageService.getById(payload);
-    const status = foundPackage?.status;
-
-    const newStatus: PackageStatus =
-      status === "pending"
-        ? "in_transit"
-        : status === "in_transit"
-          ? "out_for_delivery"
-          : status === "out_for_delivery"
-            ? "delivered"
-            : "cancelled";
-
-    const updatedPackage = (await PackageModel.update({ id: payload.id }, { status: newStatus }))!;
-
-    return { ...updatedPackage, status: newStatus };
-  },
 };
 
 export default PackageService;
