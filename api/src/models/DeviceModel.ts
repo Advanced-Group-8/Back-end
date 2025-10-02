@@ -4,7 +4,11 @@ import { executeQuery } from "@/utils/index.js";
 
 const DeviceModel = {
   create: async () => {
-    return (await executeQuery<DeviceTable>("INSERT INTO device DEFAULT VALUES RETURNING *"))[0];
+    return (
+      await executeQuery<DeviceTable>(
+        `INSERT INTO device DEFAULT VALUES RETURNING id, created_at AS "createdAt"`
+      )
+    )[0];
   },
   get: async () => {
     return await executeQuery<DeviceTable>(
