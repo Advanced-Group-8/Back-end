@@ -16,6 +16,4 @@ router.get("/", PackageValidator.get.query, PackageContoller.get);
 
 router.post("/", PackageValidator.create.body, PackageContoller.create);
 
-router.patch("/:id", PackageValidator.getById.params, PackageContoller.updateStatus);
-
 export default router;

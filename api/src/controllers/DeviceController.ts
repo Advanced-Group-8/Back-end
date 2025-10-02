@@ -33,6 +33,21 @@ const DeviceController = {
       next(error);
     }
   },
+  updateStatus: async (req: GetDeviceByIdRequest, _res: Response, next: NextFunction) => {
+    const { id } = req.params;
+
+    try {
+      const { packages, newStatus } = (await DeviceService.updateStatus({ id })) ?? {};
+
+      next({
+        message: "Status of packages updated successfully",
+        statusCode: 200,
+        data: { status: newStatus, packages },
+      } as ApiResponse);
+    } catch (error) {
+      next(error);
+    }
+  },
 };
 
 export default DeviceController;
