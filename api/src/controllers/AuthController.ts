@@ -29,6 +29,21 @@ const AuthController = {
       next(error);
     }
   },
+  getMe: async (req: SignInRequest, _res: Response, next: NextFunction) => {
+    try {
+      // req.user kommer från AuthMiddleware.authenticate
+      const user = req.user;
+      // Om user har JWT payload, hämta id
+      const userId = typeof user === "object" && user && "id" in user ? user.id as number : undefined;
+      if (!userId) {
+        return next({ statusCode: 401, message: "User not authenticated" });
+      }
+      const profile = await ProfileService.getProfile({ id: userId });
+      next({ statusCode: 200, data: profile });
+    } catch (error) {
+      next(error);
+    }
+  },
 };
 
 export default AuthController;
