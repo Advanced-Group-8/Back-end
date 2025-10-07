@@ -18,6 +18,4 @@ router.get("/", AuthMiddleware.authenticate, PackageValidator.get.query, Package
 
 router.post("/", AuthMiddleware.authenticate, PackageValidator.create.body, PackageContoller.create);
 
-router.patch("/:id", AuthMiddleware.authenticate, PackageValidator.getById.params, PackageContoller.updateStatus);
-
 export default router;
