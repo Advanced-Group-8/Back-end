@@ -44,9 +44,9 @@ const PackageValidator = {
         getPackagesQuerySchema.parse(payload);
 
         await Promise.all([
-          ProfileValidator.exists({ id: payload.senderId, role: "sender" }),
-          ProfileValidator.exists({ id: payload.receiverId, role: "receiver" }),
-          ProfileValidator.exists({ id: payload.currentCarrierId, role: "carrier" }),
+          ProfileValidator.exists({ id: payload.senderId ? Number(payload.senderId) : undefined, role: "sender" }),
+          ProfileValidator.exists({ id: payload.receiverId ? Number(payload.receiverId) : undefined, role: "receiver" }),
+          ProfileValidator.exists({ id: payload.currentCarrierId ? Number(payload.currentCarrierId) : undefined, role: "carrier" }),
         ]);
 
         next();
