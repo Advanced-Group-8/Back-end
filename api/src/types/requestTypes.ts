@@ -1,7 +1,9 @@
 import { Request } from "express";
+import { ParsedQs } from "qs";
 import {
   CreatePackagePayload,
   CreatePackageTracking,
+  GetDeviceById,
   GetPackageByDeviceId,
   GetPackageById,
   GetPackagesWithFilter,
@@ -10,26 +12,23 @@ import {
 } from "./types.js";
 import { SignInPayload, SignUpPayload } from "./httpPayloadTypes.js";
 
-export type CreatePackageRequest = Request<{}, {}, CreatePackagePayload>;
+export type CreatePackageRequest = Request<{}, {}, CreatePackagePayload, ParsedQs>;
 
-export type GetPackagesRequest = Request<{}, {}, {}, GetPackagesWithFilter>;
+export type GetPackagesRequest = Request<{}, {}, {}, ParsedQs>;
 
-export type GetPackageByIdRequest = Request<GetPackageById, {}, {}, PackageFilter>;
+export type GetPackageByIdRequest = Request<{ id: string }, {}, {}, ParsedQs>;
 
-export type GetPackageByDeviceIdRequest = Request<GetPackageByDeviceId, {}, {}, PackageFilter>;
+export type GetPackageByDeviceIdRequest = Request<{ deviceId: string }, {}, {}, ParsedQs>;
 
-export type CreatePackageTrackingRequest = Request<{}, {}, CreatePackageTracking>;
+export type CreatePackageTrackingRequest = Request<{}, {}, CreatePackageTracking, ParsedQs>;
+
+export type GetDeviceByIdRequest = Request<GetDeviceById, {}, {}, PackageFilter>;
 
 export type GetPackageTrackingByDeviceIdQuery = {
   latest?: string;
 };
 
-export type GetPackageTrackingByDeviceIdRequest = Request<
-  GetPackageTrackingByDeviceId,
-  {},
-  {},
-  GetPackageTrackingByDeviceIdQuery
->;
+export type GetPackageTrackingByDeviceIdRequest = Request<{ deviceId: string }, {}, {}, ParsedQs>;
 
 export type SignUpRequest = Request<{}, {}, SignUpPayload>;
 

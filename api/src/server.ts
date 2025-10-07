@@ -6,6 +6,7 @@ import PackageRouter from "./routes/PackageRouter.js";
 import PackageTrackingRouter from "./routes/PackageTrackingRouter.js";
 import LogRouter from "./routes/LogRouter.js";
 import AuthRouter from "./routes/AuthRouter.js";
+import DeviceRouter from "./routes/DeviceRouter.js";
 import "./db/config.js";
 import ErrorMiddleware from "./middlewares/ErrorMiddleware.js";
 import ResponseMiddleware from "./middlewares/ResponseMiddleware.js";
@@ -34,6 +35,7 @@ app.use("/package", PackageRouter);
 app.use("/package-tracking", PackageTrackingRouter);
 app.use("/logs", LogRouter);
 app.use("/auth", AuthRouter);
+app.use("/device", DeviceRouter);
 
 // Middlewares
 app.use(ResponseMiddleware.respond);

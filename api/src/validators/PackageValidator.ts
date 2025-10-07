@@ -44,9 +44,9 @@ const PackageValidator = {
         getPackagesQuerySchema.parse(payload);
 
         await Promise.all([
-          ProfileValidator.exists({ id: payload.senderId, role: "sender" }),
-          ProfileValidator.exists({ id: payload.receiverId, role: "receiver" }),
-          ProfileValidator.exists({ id: payload.currentCarrierId, role: "carrier" }),
+          ProfileValidator.exists({ id: payload.senderId ? Number(payload.senderId) : undefined, role: "sender" }),
+          ProfileValidator.exists({ id: payload.receiverId ? Number(payload.receiverId) : undefined, role: "receiver" }),
+          ProfileValidator.exists({ id: payload.currentCarrierId ? Number(payload.currentCarrierId) : undefined, role: "carrier" }),
         ]);
 
         next();
@@ -60,9 +60,13 @@ const PackageValidator = {
       const payload = req.params;
 
       try {
-        getPackageByIdParamsSchema.parse(payload);
+        const transformedId = Number(getPackageByIdParamsSchema.parse(payload).id);
 
-        await PackageValidator.exists({ id: payload.id });
+        if (isNaN(transformedId)) {
+          throw new NotFoundError(`No package with id '${transformedId}' found`);
+        }
+
+        await PackageValidator.exists({ id: transformedId });
 
         next();
       } catch (err: unknown) {
@@ -75,9 +79,13 @@ const PackageValidator = {
       const payload = req.params;
 
       try {
-        getPackageByDeviceIdParamsSchema.parse(payload);
+        const transformedId = Number(getPackageByDeviceIdParamsSchema.parse(payload).deviceId);
 
-        await PackageValidator.hasDeviceId({ deviceId: payload.deviceId });
+        if (isNaN(transformedId)) {
+          throw new NotFoundError(`No device with id '${transformedId}' found`);
+        }
+
+        await PackageValidator.hasDeviceId({ deviceId: transformedId });
 
         next();
       } catch (err: unknown) {
@@ -95,13 +103,13 @@ const PackageValidator = {
     return packageId;
   },
   hasDeviceId: async ({ deviceId }: GetPackageByDeviceId) => {
-    const packageId = (await PackageService.getByDeviceId({ deviceId }))?.id;
+    const packages = await PackageService.getByDeviceId({ deviceId });
 
-    if (!packageId) {
+    if (packages.length === 0) {
       throw new NotFoundError(`No package with deviceId '${deviceId}' found`);
     }
 
-    return packageId;
+    return packages;
   },
 };
 

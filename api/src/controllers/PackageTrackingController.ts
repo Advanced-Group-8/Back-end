@@ -27,7 +27,7 @@ const PackageTrackingController = {
     _res: Response,
     next: NextFunction
   ) => {
-    const deviceId = req.params.deviceId;
+    const deviceId = Number(req.params.deviceId);
     const latest = req.query.latest === "true";
 
     try {

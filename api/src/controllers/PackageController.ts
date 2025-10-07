@@ -26,10 +26,11 @@ const PackageContoller = {
   },
   getById: async (req: GetPackageByIdRequest, _res: Response, next: NextFunction) => {
     const { id } = req.params;
+    const numericId = Number(id);
     const filters = extractPackageFilter(req);
 
     try {
-      const foundPackage = await PackageService.getById({ ...filters, id });
+      const foundPackage = await PackageService.getById({ ...filters, id: numericId });
 
       next({
         statusCode: 200,
@@ -41,10 +42,11 @@ const PackageContoller = {
   },
   getByDeviceId: async (req: GetPackageByDeviceIdRequest, _res: Response, next: NextFunction) => {
     const { deviceId } = req.params;
+    const numericDeviceId = Number(deviceId);
     const filters = extractPackageFilter(req);
 
     try {
-      const foundPackage = await PackageService.getByDeviceId({ ...filters, deviceId });
+      const foundPackage = await PackageService.getByDeviceId({ ...filters, deviceId: numericDeviceId });
 
       next({
         statusCode: 200,
@@ -64,19 +66,6 @@ const PackageContoller = {
         statusCode: 201,
         message: "Package created successfully",
         data: createdPackage,
-      } as ApiResponse);
-    } catch (error) {
-      next(error);
-    }
-  },
-  updateStatus: async (req: GetPackageByIdRequest, _res: Response, next: NextFunction) => {
-    try {
-      const updatedPackage = await PackageService.updatePackageStatus({ id: req.params.id });
-
-      next({
-        statusCode: 200,
-        message: "Package status updated successfully",
-        data: updatedPackage,
       } as ApiResponse);
     } catch (error) {
       next(error);
