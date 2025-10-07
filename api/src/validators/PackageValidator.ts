@@ -60,13 +60,13 @@ const PackageValidator = {
       const payload = req.params;
 
       try {
-        const transformedId = getPackageByIdParamsSchema.parse(payload).id;
+        const transformedId = Number(getPackageByIdParamsSchema.parse(payload).id);
 
         if (isNaN(transformedId)) {
           throw new NotFoundError(`No package with id '${transformedId}' found`);
         }
 
-        await PackageValidator.exists({ id: payload.id });
+        await PackageValidator.exists({ id: transformedId });
 
         next();
       } catch (err: unknown) {
@@ -79,13 +79,13 @@ const PackageValidator = {
       const payload = req.params;
 
       try {
-        const transformedId = getPackageByDeviceIdParamsSchema.parse(payload).deviceId;
+        const transformedId = Number(getPackageByDeviceIdParamsSchema.parse(payload).deviceId);
 
         if (isNaN(transformedId)) {
           throw new NotFoundError(`No device with id '${transformedId}' found`);
         }
 
-        await PackageValidator.hasDeviceId({ deviceId: payload.deviceId });
+        await PackageValidator.hasDeviceId({ deviceId: transformedId });
 
         next();
       } catch (err: unknown) {
