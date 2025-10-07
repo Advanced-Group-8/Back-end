@@ -32,7 +32,7 @@ export type PackageTable = {
   senderAddressId: number;
   receiverAddressId: number;
   currentCarrierId: number;
-  deviceId: string;
+  deviceId: number;
   status: string;
   trackingCode: string;
   createdAt: string;
@@ -49,10 +49,15 @@ export type ContactInfoTable = {
 
 export type PackageTrackingTable = {
   id: number;
-  deviceId: string;
+  deviceId: number;
   lat: number;
   lng: number;
   temperature: number;
   humidity: number;
+  createdAt: string;
+};
+
+export type DeviceTable = {
+  id: number;
   createdAt: string;
 };

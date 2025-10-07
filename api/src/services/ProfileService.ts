@@ -5,6 +5,8 @@ import { GetProfileById } from "@/types/types.js";
 import { omit } from "@/utils/index.js";
 import bcrypt from "bcryptjs";
 
+import { logger } from "@/utils/logger.js";
+
 const ProfileService = {
   create: async (payload: SignUpPayload) => {
     const { email, name, password, role, companyName } = payload;
@@ -17,6 +19,8 @@ const ProfileService = {
 
     const passwordHash = await bcrypt.hash(password, 10);
 
+    logger.info(`Profile created for company: ${companyName} name on profile: `, name);
+    
     return omit(await ProfileModel.create({ email, name, passwordHash, role, companyName }), [
       "passwordHash",
     ]);

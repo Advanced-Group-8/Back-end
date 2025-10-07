@@ -1,8 +1,15 @@
 openapi: 3.0.0
 info:
-  title: Package & Package Tracking API
+  title: Logistics Backend API
   version: 1.0.0
-  description: API for managing packages, tracking information, logs, and authentication.
+  description: |
+    This API powers a logistics backend system for package management, tracking, authentication, and log viewing. It supports:
+      - User registration and authentication (JWT)
+      - Secure access to user profile info
+      - Package creation, retrieval, and status updates
+      - Real-time package tracking
+      - Viewing and clearing backend logs
+    All protected endpoints require a valid JWT Bearer token in the Authorization header.
 
 servers:
   - url: http://localhost:3000
@@ -19,12 +26,14 @@ tags:
     description: Endpoints for managing and viewing backend logs
   - name: Auth
     description: Endpoints for authentication (sign-up and sign-in)
+  - name: Device
+    description: Endpoints for managing devices
 
 paths:
   /auth/sign-up:
     post:
       tags: [Auth]
-      summary: Register a new user
+      summary: Register a new user (customer, carrier, or admin)
       requestBody:
         required: true
         content:
@@ -33,7 +42,7 @@ paths:
               $ref: "#/components/schemas/SignUpPayload"
       responses:
         "201":
-          description: User registered successfully and token issued
+          description: User registered successfully. Returns a JWT token for authentication.
           content:
             application/json:
               schema:
@@ -48,7 +57,7 @@ paths:
   /auth/sign-in:
     post:
       tags: [Auth]
-      summary: Authenticate user and issue JWT
+      summary: Authenticate user and issue JWT token
       requestBody:
         required: true
         content:
@@ -57,7 +66,7 @@ paths:
               $ref: "#/components/schemas/SignInPayload"
       responses:
         "200":
-          description: User authenticated successfully
+          description: User authenticated successfully. Returns a JWT token for authentication.
           content:
             application/json:
               schema:
@@ -69,10 +78,41 @@ paths:
         "500":
           description: Internal server error
 
+  /auth/me:
+    get:
+      tags: [Auth]
+      summary: Get profile of the authenticated user
+      description: |
+        Returns the full profile of the currently logged-in user. Requires a valid JWT Bearer token in the Authorization header.
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Profile of the logged-in user (id, email, name, role, companyName, timestamps)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Profile"
+        "401":
+          description: Unauthorized (missing or invalid token)
+        "500":
+          description: Internal server error
+
   /package:
     get:
       tags: [Package]
-      summary: Get packages by sender and receiver
+      summary: Get packages by sender, receiver, and filters
+      description: |
+        Returns a list of packages filtered by sender, receiver, carrier, status, and address. Requires authentication.
+        Query parameters:
+          - senderId, receiverId: required profile IDs
+          - currentCarrierId, status: optional
+          - senderAddress, receiverAddress: JSON-stringified address objects
+          - limit: max number of results
+          - readingsLimit: max tracking readings per package
+        Requires JWT Bearer token.
+      security:
+        - bearerAuth: []
       parameters:
         - in: query
           name: senderId
@@ -139,6 +179,11 @@ paths:
     post:
       tags: [Package]
       summary: Create a new package
+      description: |
+        Creates a new package with sender, receiver, carrier, device, and addresses. Requires authentication.
+        Returns the created package object.
+      security:
+        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -161,6 +206,9 @@ paths:
     get:
       tags: [Package]
       summary: Get package by ID
+      description: Returns a package by its unique ID. Requires authentication.
+      security:
+        - bearerAuth: []
       parameters:
         - in: path
           name: id
@@ -186,7 +234,10 @@ paths:
 
     patch:
       tags: [Package]
-      summary: Step the status of a package by ID
+      summary: Update the status of a package by ID
+      description: Steps the status of a package (pending → in_transit → out_for_delivery → delivered). Requires authentication.
+      security:
+        - bearerAuth: []
       parameters:
         - in: path
           name: id
@@ -209,12 +260,15 @@ paths:
     get:
       tags: [Package]
       summary: Get package by device ID
+      description: Returns a package by its device ID. Requires authentication.
+      security:
+        - bearerAuth: []
       parameters:
         - in: path
           name: deviceId
           required: true
           schema:
-            type: string
+            type: integer
         - in: query
           name: readingsLimit
           required: false
@@ -236,6 +290,9 @@ paths:
     get:
       tags: [Package Tracking]
       summary: Get all package tracking grouped by device
+      description: Returns all package tracking records grouped by device. Requires authentication.
+      security:
+        - bearerAuth: []
       responses:
         "200":
           description: Tracking records grouped by device
@@ -249,6 +306,9 @@ paths:
     post:
       tags: [Package Tracking]
       summary: Create a new package tracking record
+      description: Creates a new tracking record for a package/device. Requires authentication.
+      security:
+        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -271,12 +331,15 @@ paths:
     get:
       tags: [Package Tracking]
       summary: Get package tracking by device ID
+      description: Returns tracking records for a specific device. Requires authentication.
+      security:
+        - bearerAuth: []
       parameters:
         - in: path
           name: deviceId
           required: true
           schema:
-            type: string
+            type: integer
         - in: query
           name: latest
           required: false
@@ -295,11 +358,99 @@ paths:
         "500":
           description: Internal server error
 
+  /device:
+    post:
+      tags: [Device]
+      summary: Create a new device
+      responses:
+        "201":
+          description: Device created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponseDevice"
+        "500":
+          description: Internal server error
+
+    get:
+      tags: [Device]
+      summary: Get all devices
+      responses:
+        "200":
+          description: List of devices
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponseDeviceArray"
+        "500":
+          description: Internal server error
+
+  /device/{id}:
+    get:
+      tags: [Device]
+      summary: Get device by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Device found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponseDevice"
+        "404":
+          description: Device not found
+        "500":
+          description: Internal server error
+
+  /device/{id}/status:
+    patch:
+      tags: [Device]
+      summary: Step the status of all packages associated with a device
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Status of packages updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  statusCode:
+                    type: integer
+                  data:
+                    type: object
+                    properties:
+                      status:
+                        $ref: "#/components/schemas/PackageStatus"
+                      packages:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Package"
+        "404":
+          description: Device not found
+        "500":
+          description: Internal server error
+
   /logs:
     get:
       tags: [Logs]
-      summary: Retrieve the backend log file
-      description: Returns the log file as `text/plain` for download.
+      summary: Retrieve the backend log file (HTML/text)
+      description: |
+        Returns the backend log file as HTML (for viewing) or as plain text (for download). Requires authentication.
+      security:
+        - bearerAuth: []
       responses:
         "200":
           description: The log file is returned as text
@@ -319,7 +470,9 @@ paths:
     delete:
       tags: [Logs]
       summary: Clear the backend log file
-      description: Empties the log file on the server.
+      description: Empties the backend log file on the server. Requires authentication.
+      security:
+        - bearerAuth: []
       responses:
         "200":
           description: The log file has been cleared
@@ -343,6 +496,11 @@ paths:
                     type: string
 
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
   schemas:
     ApiResponse:
       type: object
@@ -402,6 +560,24 @@ components:
               items:
                 $ref: "#/components/schemas/PackageTracking"
 
+    ApiResponseDevice:
+      allOf:
+        - $ref: "#/components/schemas/ApiResponse"
+        - type: object
+          properties:
+            data:
+              $ref: "#/components/schemas/Device"
+
+    ApiResponseDeviceArray:
+      allOf:
+        - $ref: "#/components/schemas/ApiResponse"
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: "#/components/schemas/Device"
+
     SignUpPayload:
       type: object
       required: [email, name, password, role, companyName]
@@ -447,7 +623,7 @@ components:
         currentCarrierId:
           type: integer
         deviceId:
-          type: string
+          type: integer
         senderAddress:
           $ref: "#/components/schemas/AddressInput"
         receiverAddress:
@@ -494,7 +670,7 @@ components:
         id:
           type: integer
         deviceId:
-          type: string
+          type: integer
         lat:
           type: number
         lng:
@@ -503,6 +679,15 @@ components:
           type: number
         humidity:
           type: number
+        createdAt:
+          type: string
+          format: date-time
+
+    Device:
+      type: object
+      properties:
+        id:
+          type: integer
         createdAt:
           type: string
           format: date-time

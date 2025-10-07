@@ -8,7 +8,8 @@
         "start": "node dist/server.js",
         "dev": "tsx watch src/server.ts",
         "build": "tsc && tsc-alias && cpx \"src/docs/**/*\" dist/docs",
-        "test": "echo \"ok\" && exit 0"
+        "test": "echo \"ok\" && exit 0",
+        "migrate": "flyway -locations=filesystem:./sql migrate"
     },
     "repository": {
         "type": "git",

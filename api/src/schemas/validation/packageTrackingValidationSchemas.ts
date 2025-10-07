@@ -2,8 +2,8 @@ import z from "zod";
 
 export const createPackageTrackingSchema = z.object({
   deviceId: z
-    .string({ message: "'deviceId' is required and cannot be empty" })
-    .nonempty({ message: "'deviceId' is required and cannot be empty" }),
+    .number({ message: "'deviceId' is required and must be a positive number" })
+    .positive({ message: "'deviceId' is required and must be a positive number" }),
   lat: z
     .number({ message: "'lat' is required and must be a number" })
     .refine((val) => val >= -90 && val <= 90, { message: "'lat' must be between -90 and 90" }),

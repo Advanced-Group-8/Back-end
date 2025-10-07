@@ -1,12 +1,13 @@
 import express from "express";
 import fs from "fs";
 import path from "path";
+import AuthMiddleware from "../middlewares/AuthMiddleware.js";
 
 const router = express.Router();
 const logPath = path.resolve(process.cwd(), "logs", "backend.log");
 
-// Visa loggar som HTML med nedladdningsknapp
-router.get("/", (req, res) => {
+// Visa loggar som HTML med nedladdningsknapp (protected)
+router.get("/", AuthMiddleware.authenticate, (req, res) => {
   if (!fs.existsSync(logPath)) {
     return res.status(404).send("<h2>Loggfilen finns inte.</h2>");
   }

@@ -68,3 +68,24 @@ export const parseJson = <T>(value: unknown, fallback: T): T => {
     return fallback;
   }
 };
+
+export const mostFrequentString = (arr: string[]): string | null => {
+  if (arr.length === 0) {
+    return null;
+  }
+
+  const frequency: Record<string, number> = {};
+  let maxCount = 0;
+  let mostFrequent: string | null = null;
+
+  for (const str of arr) {
+    frequency[str] = (frequency[str] || 0) + 1;
+
+    if (frequency[str] > maxCount) {
+      maxCount = frequency[str];
+      mostFrequent = str;
+    }
+  }
+
+  return mostFrequent;
+};
