@@ -26,6 +26,8 @@ tags:
     description: Endpoints for managing and viewing backend logs
   - name: Auth
     description: Endpoints for authentication (sign-up and sign-in)
+  - name: Device
+    description: Endpoints for managing devices
 
 paths:
   /auth/sign-up:
@@ -266,7 +268,7 @@ paths:
           name: deviceId
           required: true
           schema:
-            type: string
+            type: integer
         - in: query
           name: readingsLimit
           required: false
@@ -337,7 +339,7 @@ paths:
           name: deviceId
           required: true
           schema:
-            type: string
+            type: integer
         - in: query
           name: latest
           required: false
@@ -351,6 +353,91 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ApiResponsePackageTrackingArray"
+        "404":
+          description: Device not found
+        "500":
+          description: Internal server error
+
+  /device:
+    post:
+      tags: [Device]
+      summary: Create a new device
+      responses:
+        "201":
+          description: Device created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponseDevice"
+        "500":
+          description: Internal server error
+
+    get:
+      tags: [Device]
+      summary: Get all devices
+      responses:
+        "200":
+          description: List of devices
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponseDeviceArray"
+        "500":
+          description: Internal server error
+
+  /device/{id}:
+    get:
+      tags: [Device]
+      summary: Get device by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Device found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponseDevice"
+        "404":
+          description: Device not found
+        "500":
+          description: Internal server error
+
+  /device/{id}/status:
+    patch:
+      tags: [Device]
+      summary: Step the status of all packages associated with a device
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Status of packages updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  statusCode:
+                    type: integer
+                  data:
+                    type: object
+                    properties:
+                      status:
+                        $ref: "#/components/schemas/PackageStatus"
+                      packages:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Package"
         "404":
           description: Device not found
         "500":
@@ -473,6 +560,24 @@ components:
               items:
                 $ref: "#/components/schemas/PackageTracking"
 
+    ApiResponseDevice:
+      allOf:
+        - $ref: "#/components/schemas/ApiResponse"
+        - type: object
+          properties:
+            data:
+              $ref: "#/components/schemas/Device"
+
+    ApiResponseDeviceArray:
+      allOf:
+        - $ref: "#/components/schemas/ApiResponse"
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: "#/components/schemas/Device"
+
     SignUpPayload:
       type: object
       required: [email, name, password, role, companyName]
@@ -518,7 +623,7 @@ components:
         currentCarrierId:
           type: integer
         deviceId:
-          type: string
+          type: integer
         senderAddress:
           $ref: "#/components/schemas/AddressInput"
         receiverAddress:
@@ -565,7 +670,7 @@ components:
         id:
           type: integer
         deviceId:
-          type: string
+          type: integer
         lat:
           type: number
         lng:
@@ -574,6 +679,15 @@ components:
           type: number
         humidity:
           type: number
+        createdAt:
+          type: string
+          format: date-time
+
+    Device:
+      type: object
+      properties:
+        id:
+          type: integer
         createdAt:
           type: string
           format: date-time

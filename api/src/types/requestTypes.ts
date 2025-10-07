@@ -2,6 +2,7 @@ import { Request } from "express";
 import {
   CreatePackagePayload,
   CreatePackageTracking,
+  GetDeviceById,
   GetPackageByDeviceId,
   GetPackageById,
   GetPackagesWithFilter,
@@ -19,6 +20,8 @@ export type GetPackageByIdRequest = Request<GetPackageById, {}, {}, PackageFilte
 export type GetPackageByDeviceIdRequest = Request<GetPackageByDeviceId, {}, {}, PackageFilter>;
 
 export type CreatePackageTrackingRequest = Request<{}, {}, CreatePackageTracking>;
+
+export type GetDeviceByIdRequest = Request<GetDeviceById, {}, {}, PackageFilter>;
 
 export type GetPackageTrackingByDeviceIdQuery = {
   latest?: string;

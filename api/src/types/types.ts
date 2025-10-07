@@ -1,4 +1,10 @@
-import { AddressTable, PackageTable, PackageTrackingTable, ProfileTable } from "./dbTablesTypes.js";
+import {
+  AddressTable,
+  DeviceTable,
+  PackageTable,
+  PackageTrackingTable,
+  ProfileTable,
+} from "./dbTablesTypes.js";
 
 export type GetProfileById = { id: NonNullable<ProfileTable["id"]> };
 
@@ -17,6 +23,10 @@ export type GetPackageByIdWithFilter = GetPackageById & PackageFilter;
 
 export type GetPackageByDeviceId = {
   deviceId: NonNullable<PackageTable["deviceId"]>;
+};
+
+export type GetDeviceById = {
+  id: NonNullable<DeviceTable["id"]>;
 };
 
 export type GetPackageByDeviceIdWithFilter = GetPackageByDeviceId & PackageFilter;
