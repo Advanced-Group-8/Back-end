@@ -21,18 +21,15 @@ const AuthController = {
   signIn: async (req: SignInRequest, res: Response, next: NextFunction) => {
     try {
       const profile = await ProfileService.signIn(req.body);
+      const token = sign(profile);
 
-        const token = sign(profile); // generate JWT
-
-      res
-        .cookie("token", sign(profile), {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === "production",
-          sameSite: "lax",
-          maxAge: 1000 * 60 * 60 * 24, // 1 day
-        })
-        .status(200)
-        .json({ message: "Login successful" }) as ApiResponse;
+      res.setHeader("Authorization", `Bearer ${token}`);
+      
+      next({
+        message: "Login successful",
+        statusCode: 200,
+        token
+      } as ApiResponse); //gives token as both Header and in Body
     } catch (error) {
       next(error);
     }
