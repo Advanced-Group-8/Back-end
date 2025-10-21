@@ -4,9 +4,9 @@ import { NextFunction, Request, Response } from "express";
 const ResponseMiddleware = {
   respond: (payload: unknown, _req: Request, res: Response, next: NextFunction) => {
     if (isOkApiResponse(payload)) {
-      const { statusCode, message, data } = payload;
+      const { statusCode, message, data, token } = payload;
 
-      return res.status(statusCode).json({ message, data, success: true });
+      return res.status(statusCode).json({ message, data, token, success: true });
     }
 
     return next(payload);
