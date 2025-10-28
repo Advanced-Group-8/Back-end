@@ -44,3 +44,24 @@ CREATE TABLE IF NOT EXISTS package_tracking (
     humidity DOUBLE PRECISION NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE IF NOT EXISTS device (
+    id BIGSERIAL PRIMARY KEY,
+    device_id VARCHAR(100) NOT NULL UNIQUE,
+    name VARCHAR(100),
+    type VARCHAR(50),
+    status VARCHAR(50) DEFAULT 'active',
+    last_seen TIMESTAMP,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+ALTER TABLE package
+    ADD CONSTRAINT fk_package_device
+    FOREIGN KEY (device_id)
+    REFERENCES device(device_id);
+
+ALTER TABLE package_tracking
+    ADD CONSTRAINT fk_tracking_device
+    FOREIGN KEY (device_id)
+    REFERENCES device(device_id);

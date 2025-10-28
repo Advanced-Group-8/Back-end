@@ -51,11 +51,10 @@ router.get("/download", (req, res) => {
 router.delete("/", (req, res) => {
   try {
     fs.writeFileSync(logPath, "");
-    res.json({ message: "Loggfilen är nu rensad. "});
-  }
-  catch (err) {
+    res.json({ message: "Loggfilen är nu rensad. " });
+  } catch (err) {
     res.status(500).json({ message: "Kunde inte rensa loggfilen", error: err });
   }
-})
+});
 
 export default router;
