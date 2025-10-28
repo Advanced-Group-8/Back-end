@@ -6,15 +6,15 @@ import AuthMiddleware from "../middlewares/AuthMiddleware.js";
 const router = express.Router();
 const logPath = path.resolve(process.cwd(), "logs", "backend.log");
 
-router.get("/", (req, res) => {
+// Visa loggar som HTML med nedladdningsknapp (protected)
+router.get("/", AuthMiddleware.authenticate, (req, res) => {
   if (!fs.existsSync(logPath)) {
     return res.status(404).send("<h2>Loggfilen finns inte.</h2>");
   }
-  const logs = fs
-    .readFileSync(logPath, "utf-8")
+  const logs = fs.readFileSync(logPath, "utf-8")
     .split("\n")
     .filter(Boolean)
-    .map((line) => {
+    .map(line => {
       try {
         const entry = JSON.parse(line);
         return `<div><strong>[${entry.level}]</strong> ${entry.timestamp}: ${entry.message} ${entry.meta ? JSON.stringify(entry.meta) : ""}</div>`;
