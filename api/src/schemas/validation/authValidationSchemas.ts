@@ -1,6 +1,6 @@
 import z from "zod";
 
-export const signUpSchmea = z.object({
+export const signUpSchema = z.object({
   email: z.string().email("Invalid email"),
   name: z
     .string()

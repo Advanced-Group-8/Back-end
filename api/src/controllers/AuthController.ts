@@ -18,15 +18,18 @@ const AuthController = {
       next(error);
     }
   },
-  signIn: async (req: SignInRequest, _res: Response, next: NextFunction) => {
+  signIn: async (req: SignInRequest, res: Response, next: NextFunction) => {
     try {
       const profile = await ProfileService.signIn(req.body);
+      const token = sign(profile);
 
+      res.setHeader("Authorization", `Bearer ${token}`);
+      
       next({
         message: "Login successful",
         statusCode: 200,
-        token: sign(profile),
-      } as ApiResponse);
+        token
+      } as ApiResponse); //gives token as both Header and in Body
     } catch (error) {
       next(error);
     }
