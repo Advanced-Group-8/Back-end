@@ -18,7 +18,11 @@ import {
 
 const PackageValidator = {
   create: {
-    body: async (req: CreatePackageRequest, _res: Response, next: NextFunction) => {
+    body: async (
+      req: CreatePackageRequest,
+      _res: Response,
+      next: NextFunction
+    ) => {
       const payload = req.body;
 
       try {
@@ -27,7 +31,10 @@ const PackageValidator = {
         await Promise.all([
           ProfileValidator.exists({ id: payload.senderId, role: "sender" }),
           ProfileValidator.exists({ id: payload.receiverId, role: "receiver" }),
-          ProfileValidator.exists({ id: payload.currentCarrierId, role: "carrier" }),
+          ProfileValidator.exists({
+            id: payload.currentCarrierId,
+            role: "carrier",
+          }),
         ]);
 
         next();
@@ -37,16 +44,32 @@ const PackageValidator = {
     },
   },
   get: {
-    query: async (req: GetPackagesRequest, _res: Response, next: NextFunction) => {
+    query: async (
+      req: GetPackagesRequest,
+      _res: Response,
+      next: NextFunction
+    ) => {
       const payload = req.query;
 
       try {
-        getPackagesQuerySchema.parse(payload);
+        const parsed = getPackagesQuerySchema.parse(payload);
 
         await Promise.all([
-          ProfileValidator.exists({ id: payload.senderId ? Number(payload.senderId) : undefined, role: "sender" }),
-          ProfileValidator.exists({ id: payload.receiverId ? Number(payload.receiverId) : undefined, role: "receiver" }),
-          ProfileValidator.exists({ id: payload.currentCarrierId ? Number(payload.currentCarrierId) : undefined, role: "carrier" }),
+          parsed.senderId !== undefined
+            ? ProfileValidator.exists({ id: parsed.senderId, role: "sender" })
+            : Promise.resolve(),
+          parsed.receiverId !== undefined
+            ? ProfileValidator.exists({
+                id: parsed.receiverId,
+                role: "receiver",
+              })
+            : Promise.resolve(),
+          parsed.currentCarrierId !== undefined
+            ? ProfileValidator.exists({
+                id: parsed.currentCarrierId,
+                role: "carrier",
+              })
+            : Promise.resolve(),
         ]);
 
         next();
@@ -56,14 +79,22 @@ const PackageValidator = {
     },
   },
   getById: {
-    params: async (req: GetPackageByIdRequest, _res: Response, next: NextFunction) => {
+    params: async (
+      req: GetPackageByIdRequest,
+      _res: Response,
+      next: NextFunction
+    ) => {
       const payload = req.params;
 
       try {
-        const transformedId = Number(getPackageByIdParamsSchema.parse(payload).id);
+        const transformedId = Number(
+          getPackageByIdParamsSchema.parse(payload).id
+        );
 
         if (isNaN(transformedId)) {
-          throw new NotFoundError(`No package with id '${transformedId}' found`);
+          throw new NotFoundError(
+            `No package with id '${transformedId}' found`
+          );
         }
 
         await PackageValidator.exists({ id: transformedId });
@@ -75,11 +106,17 @@ const PackageValidator = {
     },
   },
   getByDeviceId: {
-    params: async (req: GetPackageByDeviceIdRequest, _res: Response, next: NextFunction) => {
+    params: async (
+      req: GetPackageByDeviceIdRequest,
+      _res: Response,
+      next: NextFunction
+    ) => {
       const payload = req.params;
 
       try {
-        const transformedId = Number(getPackageByDeviceIdParamsSchema.parse(payload).deviceId);
+        const transformedId = Number(
+          getPackageByDeviceIdParamsSchema.parse(payload).deviceId
+        );
 
         if (isNaN(transformedId)) {
           throw new NotFoundError(`No device with id '${transformedId}' found`);

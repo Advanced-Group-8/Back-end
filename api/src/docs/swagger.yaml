@@ -105,27 +105,28 @@ paths:
       description: |
         Returns a list of packages filtered by sender, receiver, carrier, status, and address. Requires authentication.
         Query parameters:
-          - senderId, receiverId: required profile IDs
+          - senderId, receiverId: at least one is required
           - currentCarrierId, status: optional
           - senderAddress, receiverAddress: JSON-stringified address objects
           - limit: max number of results
           - readingsLimit: max tracking readings per package
         Requires JWT Bearer token.
+        **Note:** At least one of `senderId` or `receiverId` must be provided.
       security:
         - bearerAuth: []
       parameters:
         - in: query
           name: senderId
-          required: true
+          required: false
           schema:
             type: integer
-          description: Sender profile ID (required)
+          description: Sender profile ID (at least one of senderId or receiverId is required)
         - in: query
           name: receiverId
-          required: true
+          required: false
           schema:
             type: integer
-          description: Receiver profile ID (required)
+          description: Receiver profile ID (at least one of senderId or receiverId is required)
         - in: query
           name: currentCarrierId
           required: false
@@ -172,7 +173,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ApiResponsePackageArray"
         "400":
-          description: Missing or invalid query params
+          description: Missing or invalid query params (at least one of senderId or receiverId is required)
         "500":
           description: Internal server error
 
