@@ -5,7 +5,12 @@ import express from "express";
 
 const router = express.Router();
 
-router.get("/:id", AuthMiddleware.authenticate, PackageValidator.getById.params, PackageContoller.getById);
+router.get(
+  "/:id",
+  AuthMiddleware.authenticate,
+  PackageValidator.getById.params,
+  PackageContoller.getById
+);
 
 router.get(
   "/device/:deviceId",
@@ -14,8 +19,25 @@ router.get(
   PackageContoller.getByDeviceId
 );
 
-router.get("/", AuthMiddleware.authenticate, PackageValidator.get.query, PackageContoller.get);
+router.get(
+  "/carrier/:carrierId",
+  AuthMiddleware.authenticate,
+  PackageValidator.getByCarrierId.params,
+  PackageContoller.getByCarrierId
+);
 
-router.post("/", AuthMiddleware.authenticate, PackageValidator.create.body, PackageContoller.create);
+router.get(
+  "/",
+  AuthMiddleware.authenticate,
+  PackageValidator.get.query,
+  PackageContoller.get
+);
+
+router.post(
+  "/",
+  AuthMiddleware.authenticate,
+  PackageValidator.create.body,
+  PackageContoller.create
+);
 
 export default router;
