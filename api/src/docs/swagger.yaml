@@ -287,6 +287,46 @@ paths:
         "500":
           description: Internal server error
 
+  /package/carrier/{carrierId}:
+    get:
+      tags: [Package]
+      summary: Get all packages for a carrier
+      description: Returns all packages where currentCarrierId matches the given carrierId. Requires authentication.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: carrierId
+          required: true
+          schema:
+            type: integer
+          description: Carrier profile ID
+        - in: query
+          name: limit
+          required: false
+          schema:
+            type: integer
+          description: Max number of results to return
+        - in: query
+          name: readingsLimit
+          required: false
+          schema:
+            type: integer
+          description: Limit on tracking readings per package
+      responses:
+        "200":
+          description: List of packages for the carrier
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponsePackageArray"
+        "400":
+          description: Invalid or missing carrierId
+        "404":
+          description: Carrier not found
+        "500":
+          description: Internal server error
+
   /package-tracking:
     get:
       tags: [Package Tracking]

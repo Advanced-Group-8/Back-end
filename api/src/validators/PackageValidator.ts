@@ -1,4 +1,4 @@
-import { NextFunction, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import { NotFoundError } from "@/errors/Error.js";
 import {
   CreatePackageRequest,
@@ -128,6 +128,23 @@ const PackageValidator = {
       } catch (err: unknown) {
         return next(err);
       }
+    },
+  },
+  getByCarrierId: {
+    params: async (
+      req: Request<{ carrierId: string }>,
+      _res: Response,
+      next: NextFunction
+    ) => {
+      const { carrierId } = req.params;
+      if (!carrierId || isNaN(Number(carrierId))) {
+        return next({
+          statusCode: 400,
+          message: "Invalid or missing carrierId",
+        });
+      }
+      await ProfileValidator.exists({ id: Number(carrierId), role: "carrier" });
+      next();
     },
   },
   exists: async (payload: GetPackageById) => {
